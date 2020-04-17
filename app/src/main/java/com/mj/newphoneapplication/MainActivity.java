@@ -29,6 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.internal.telephony.ITelephony;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -41,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1;
     private static MainActivity ins;
     private ArrayList<ContactInfo> contactArray;
+    private ArrayList<DatabaseInfo> datbaseArray;
     private String incomingNumber;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     String[] permission_list = {
@@ -57,6 +64,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ins = this;
 
+        datbaseArray = new ArrayList<DatabaseInfo>();
+        db.collection("entities")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DatabaseInfo databaseInfo = new DatabaseInfo();
+                                databaseInfo.setNumber(document.getId());
+                                databaseInfo.setName(document.getData().get("이름").toString());
+                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+                                System.out.println(databaseInfo);
+                                datbaseArray.add(databaseInfo);
+
+                            }
+
+
+                        } else {
+                            Log.w("Bad", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
+
 
         //앱 권한 받기 기능
         checkPermission();
@@ -68,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             getContacts();
         }
+
+
 
 
 
@@ -245,6 +280,10 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<ContactInfo> getContactArray() {
         return contactArray;
+    }
+
+    public ArrayList<DatabaseInfo> getDatbaseArray() {
+        return datbaseArray;
     }
 
     public String getIncomingNumber() {

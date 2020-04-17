@@ -27,6 +27,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         //ITelephony telephonyService;
         ArrayList<ContactInfo> contactArray = MainActivity.getInstace().getContactArray();
+        ArrayList<DatabaseInfo> databaseArray = MainActivity.getInstace().getDatbaseArray();
 
 
 
@@ -43,7 +44,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if(number != null){
 
                 MainActivity.getInstace().setIncomingNumber(number);
-                //MainActivity.getInstace().updateTheTextView(number);
                 for(int i = 0; i < contactArray.size(); i++){
 
                     if(contactArray.get(i).getPhoneNumber().equals(number)){
@@ -55,6 +55,19 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         unknownCall = 1;
                     }
                 }
+
+                for(int i = 0; i < databaseArray.size(); i++){
+
+                    if(databaseArray.get(i).getNumber().equals(number)){
+                        Toast.makeText(context, "In database Contact List " + number, Toast.LENGTH_SHORT).show();
+                        unknownCall = 0;
+                    }
+                    else{
+                        //Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+                        unknownCall = 1;
+                    }
+                }
+
             }
 
 
