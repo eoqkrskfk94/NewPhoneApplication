@@ -83,13 +83,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
 
-                Intent goIntent = new Intent(context, MainActivity.class);
-                goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(goIntent);
-
                 MainActivity.getInstace().stopPop();
                 counter = 0;
                 if(call == 0){
+                    Intent goIntent = new Intent(context, MainActivity.class);
+                    goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(goIntent);
                     call++;
                     tt = timerTaskMaker();
                     final Timer timer = new Timer();
@@ -104,6 +103,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 call = 0;
                 MainActivity.getInstace().updateTheTimeView(0,unknownCall);
                 MainActivity.getInstace().updateTheBacground(-1);
+                MainActivity.getInstace().finish();
             }
 
 

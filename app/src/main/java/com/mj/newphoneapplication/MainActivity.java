@@ -294,7 +294,6 @@ public class MainActivity extends AppCompatActivity {
         this.incomingNumber = incomingNumber;
     }
 
-
     //overlay 권한받기
     public void checkPermissionOverlay() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
@@ -327,10 +326,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
 
 
 

@@ -39,8 +39,9 @@ public class MyService extends Service {
         System.out.println("here" + number);
 
         params = new WindowManager.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         |WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -51,21 +52,21 @@ public class MyService extends Service {
         mView = inflate.inflate(R.layout.view_in_service, null);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         textView.setText(number);
-        final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
+        //final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
         final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
         final Intent goIntent = new Intent(this, MainActivity.class);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                bt.setImageResource(R.mipmap.ic_launcher_round);
-                textView.setText("on click!!");
-                startActivity(goIntent);
-                stopSelf();
-
-            }
-        });
+//        bt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                bt.setImageResource(R.mipmap.ic_launcher_round);
+//                textView.setText("on click!!");
+//                startActivity(goIntent);
+//                stopSelf();
+//
+//            }
+//        });
 
         cancel.setOnClickListener(new View.OnClickListener(){
             @Override
