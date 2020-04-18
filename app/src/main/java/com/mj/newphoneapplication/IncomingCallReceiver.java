@@ -18,6 +18,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     static TimerTask tt;
     public int counter = 0;
     static int call = 0;
+    static int checked = 0;
     static int unknownCall;
     static String number;
 
@@ -42,57 +43,64 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
 
             if(number != null){
-
                 MainActivity.getInstace().setIncomingNumber(number);
-                for(int i = 0; i < contactArray.size(); i++){
-
-                    if(contactArray.get(i).getPhoneNumber().equals(number)){
-                        //Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
-                        unknownCall = 0;
-                    }
-                    else{
-                        //Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
-                        unknownCall = 1;
-                    }
-                }
-
-                for(int i = 0; i < databaseArray.size(); i++){
-
-                    if(databaseArray.get(i).getNumber().equals(number)){
-                        Toast.makeText(context, "In database Contact List " + number, Toast.LENGTH_SHORT).show();
-                        unknownCall = 0;
-                    }
-                    else{
-                        //Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
-                        unknownCall = 1;
-                    }
-                }
-
             }
+
 
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)){
 
                 if(number != null){
+                    if (contactArray != null){
+                        for(int i = 0; i < contactArray.size(); i++){
+                            if(contactArray.get(i).getPhoneNumber().equals(number)){
+                                //System.out.println(contactArray.get(i).getPhoneNumber());
+                                Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
+                                unknownCall = 0;
+                                break;
+                            }
+                            else{
+                                Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+                                unknownCall = 1;
+                            }
+                        }
+                    }
+
+                    if (databaseArray != null){
+                        for(int i = 0; i < databaseArray.size(); i++){
+
+                            if(databaseArray.get(i).getNumber().equals(number)){
+                                Toast.makeText(context, "In database Contact List " + number, Toast.LENGTH_SHORT).show();
+                                unknownCall = 1;
+                                break;
+                            }
+
+                        }
+
+                    }
+                    checked = 1;
                     MainActivity.getInstace().startPopup();
-                    //MainActivity.getInstace().updateTheTextView(number);
+
                 }
 
             }
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
-
+                checked = 0;
                 MainActivity.getInstace().stopPop();
-                counter = 0;
-                if(call == 0){
-                    Intent goIntent = new Intent(context, MainActivity.class);
-                    goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(goIntent);
-                    call++;
-                    tt = timerTaskMaker();
-                    final Timer timer = new Timer();
-                    timer.schedule(tt,0,1000);
+                if(number != null){
+                    counter = 0;
+                    if(call == 0){
+                        Intent goIntent = new Intent(context, MainActivity.class);
+                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(goIntent);
+                        call++;
+                        tt = timerTaskMaker();
+                        final Timer timer = new Timer();
+                        timer.schedule(tt,0,1000);
+                    }
+
                 }
 
             }

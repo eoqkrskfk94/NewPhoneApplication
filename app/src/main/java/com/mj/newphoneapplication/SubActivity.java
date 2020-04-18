@@ -2,52 +2,35 @@ package com.mj.newphoneapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import pl.droidsonroids.gif.GifImageView;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.internal.telephony.ITelephony;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class SubActivity extends AppCompatActivity {
 
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1;
-    private static MainActivity ins;
+    private static SubActivity ins;
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
-    private String incomingNumber;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -57,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_CONTACTS,
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sub);
         ins = this;
+
         if(datbaseArray == null){
             datbaseArray = new ArrayList<DatabaseInfo>();
             db.collection("entities")
@@ -105,102 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
 
     }
 
-
-
-    public static MainActivity  getInstace(){
+    public static SubActivity  getInstace(){
         return ins;
-    }
-
-    public void updateTheTextView(final String t) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                System.out.println("This is the number: " + t);
-                TextView number = (TextView) findViewById(R.id.numberView);
-                number.setText(t);
-            }
-        });
-    }
-
-    public void updateTheBacground(final int level) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                ConstraintLayout layout = (ConstraintLayout)findViewById(R.id.background);
-                TextView textView = (TextView)findViewById(R.id.dangertxt);
-                ImageView box = (ImageView)findViewById(R.id.whitebox);
-                if(level == -1){
-                    layout.setBackgroundColor(Color.rgb(255, 255, 255));
-                    box.setVisibility(View.VISIBLE);
-                }
-                else if(level == 0){
-                    layout.setBackgroundColor(Color.rgb(154, 209, 89));
-                    textView.setText("안전");
-                    box.setVisibility(View.INVISIBLE);
-
-                }
-
-                else if(level == 1){
-                    layout.setBackgroundColor(Color.rgb(242, 228, 34));
-                    textView.setText("양호");
-                    box.setVisibility(View.INVISIBLE);
-
-                }
-
-                else if(level == 2){
-                    layout.setBackgroundColor(Color.rgb(252, 166, 68));
-                    textView.setText("주의");
-                }
-
-                else if(level == 3){
-                    layout.setBackgroundColor(Color.rgb(252, 114, 68));
-                    textView.setText("위험");
-                }
-            }
-        });
-    }
-
-    public void updateTheTimeView(final int sec, final int unknownCall) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                TextView call_time = (TextView) findViewById(R.id.timetxt);
-                if(sec == 0){
-                    call_time.setText("");
-                }
-                else{
-                    LocalTime timeOfDay = LocalTime.ofSecondOfDay(sec);
-                    String time = timeOfDay.toString();
-
-                    call_time.setText(time);
-
-                    //진동
-                    final Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-
-                    if(unknownCall == 1){
-                        if(sec == 1){
-                            updateTheBacground(1);
-                        }
-
-                        else if(sec == 10){
-                            //System.out.println("Vibrate");
-                            //vibrator.vibrate(1000);
-                            updateTheBacground(2);
-                        }
-
-                        else if(sec == 15){
-                            updateTheBacground(3);
-                        }
-                    }
-                    else{
-                        updateTheBacground(0);
-                    }
-
-
-                }
-
-            }
-        });
     }
 
     public void checkPermission(){
@@ -285,15 +179,6 @@ public class MainActivity extends AppCompatActivity {
         return datbaseArray;
     }
 
-    public String getIncomingNumber() {
-        return incomingNumber;
-    }
-
-    public void setIncomingNumber(String incomingNumber) {
-        this.incomingNumber = incomingNumber;
-    }
-
-    //overlay 권한받기
     public void checkPermissionOverlay() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
             if (!Settings.canDrawOverlays(this)) {              // 체크
@@ -304,16 +189,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startPopup(){
-        if(Settings.canDrawOverlays(MainActivity.this)){
-            startService(new Intent(MainActivity.this, MyService.class));
-        }}
-
-    public void stopPop(){ stopService(new Intent(MainActivity.this, MyService.class));}
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
@@ -321,12 +196,8 @@ public class MainActivity extends AppCompatActivity {
                 // TODO 동의를 얻지 못했을 경우의 처리
 
             } else {
-                startService(new Intent(MainActivity.this, MyService.class));
+                startService(new Intent(SubActivity.this, MyService.class));
             }
         }
     }
-
-
-
-
 }

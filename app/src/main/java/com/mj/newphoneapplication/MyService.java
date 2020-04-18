@@ -36,7 +36,7 @@ public class MyService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         number = MainActivity.getInstace().getIncomingNumber();
-        System.out.println("here" + number);
+
 
         params = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
