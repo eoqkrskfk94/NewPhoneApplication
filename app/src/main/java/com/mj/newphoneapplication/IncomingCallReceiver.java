@@ -3,8 +3,10 @@ package com.mj.newphoneapplication;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.internal.telephony.ITelephony;
@@ -21,6 +23,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     static int checked = 0;
     static int unknownCall;
     static String number;
+    static String contactName;
 
 
     @Override
@@ -29,6 +32,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         //ITelephony telephonyService;
         ArrayList<ContactInfo> contactArray = MainActivity.getInstace().getContactArray();
         ArrayList<DatabaseInfo> databaseArray = MainActivity.getInstace().getDatbaseArray();
+
 
 
 
@@ -51,20 +55,30 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)){
 
                 if(number != null){
-                    if (contactArray != null){
-                        for(int i = 0; i < contactArray.size(); i++){
-                            if(contactArray.get(i).getPhoneNumber().equals(number)){
-                                //System.out.println(contactArray.get(i).getPhoneNumber());
-                                Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
-                                unknownCall = 0;
-                                break;
-                            }
-                            else{
-                                Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
-                                unknownCall = 1;
-                            }
-                        }
+                    Boolean exist = contactExists(context,number);
+                    if(exist){
+                        Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
+                        MainActivity.getInstace().setIncomingName(contactName);
+                        unknownCall = 0;
                     }
+                    else{
+                        Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+                        unknownCall = 1;
+                    }
+//                    if (contactArray != null){
+//                        System.out.println("check");
+//                        for(int i = 0; i < contactArray.size(); i++){
+//                            if(contactArray.get(i).getPhoneNumber().equals(number)){
+//                                //System.out.println(contactArray.get(i).getPhoneNumber());
+//                                Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
+//                                unknownCall = 0;
+//                            }
+//                            else{
+//                                Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+//                                unknownCall = 1;
+//                            }
+//                        }
+//                    }
 
                     if (databaseArray != null){
                         for(int i = 0; i < databaseArray.size(); i++){
@@ -131,6 +145,26 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             }
         };
         return  tempTask;
+    }
+
+    public boolean contactExists(Context context, String number) {
+        /// number is the phone number
+        Uri lookupUri = Uri.withAppendedPath(
+                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                Uri.encode(number));
+        String[] mPhoneNumberProjection = { ContactsContract.PhoneLookup._ID, ContactsContract.PhoneLookup.NUMBER, ContactsContract.PhoneLookup.DISPLAY_NAME };
+        Cursor cur = context.getContentResolver().query(lookupUri,mPhoneNumberProjection, null, null, null);
+        try {
+            if (cur.moveToFirst()) {
+                contactName = cur.getString(2);
+                cur.close();
+                return true;
+            }
+        } finally {
+            if (cur != null)
+                cur.close();
+        }
+        return false;
     }
 
 

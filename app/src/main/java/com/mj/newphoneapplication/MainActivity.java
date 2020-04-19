@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
     private String incomingNumber;
+    private String incomingName;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                                     databaseInfo.setNumber(document.getId());
                                     databaseInfo.setName(document.getData().get("이름").toString());
                                     databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-                                    System.out.println(databaseInfo);
                                     datbaseArray.add(databaseInfo);
 
                                 }
@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
     public void updateTheTextView(final String t) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                System.out.println("This is the number: " + t);
                 TextView number = (TextView) findViewById(R.id.numberView);
                 number.setText(t);
             }
@@ -291,6 +290,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setIncomingNumber(String incomingNumber) {
         this.incomingNumber = incomingNumber;
+    }
+
+    public String getIncomingName() {
+        return incomingName;
+    }
+
+    public void setIncomingName(String incomingName) {
+        this.incomingName = incomingName;
     }
 
     //overlay 권한받기

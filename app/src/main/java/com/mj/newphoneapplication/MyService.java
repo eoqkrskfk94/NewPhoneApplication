@@ -22,6 +22,7 @@ public class MyService extends Service {
     WindowManager wm;
     View mView;
     String number;
+    String name;
     private WindowManager.LayoutParams params;
 
 
@@ -36,6 +37,7 @@ public class MyService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         number = MainActivity.getInstace().getIncomingNumber();
+        name = MainActivity.getInstace().getIncomingName();
 
 
         params = new WindowManager.LayoutParams(
@@ -51,7 +53,9 @@ public class MyService extends Service {
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
         mView = inflate.inflate(R.layout.view_in_service, null);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
+        final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
         textView.setText(number);
+        nameView.setText(name);
         //final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
         final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
