@@ -24,7 +24,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     static int unknownCall;
     static String number;
     static String contactName;
-
+    static String lastState;
 
     @Override
     public void onReceive(Context context, Intent intent){
@@ -35,14 +35,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
 
 
-
         try{
 
             String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
             number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
 
-            System.out.println(number);
+//            System.out.println(number);
+//            System.out.println("1 " + state);
+
 
 
 
@@ -54,19 +55,21 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_RINGING)){
 
+
+
                 if(number != null){
+                    lastState =state;
                     Boolean exist = contactExists(context,number);
                     if(exist){
-                        Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
                         MainActivity.getInstace().setIncomingName(contactName);
                         unknownCall = 0;
                     }
                     else{
-                        Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
                         unknownCall = 1;
                     }
 //                    if (contactArray != null){
-//                        System.out.println("check");
 //                        for(int i = 0; i < contactArray.size(); i++){
 //                            if(contactArray.get(i).getPhoneNumber().equals(number)){
 //                                //System.out.println(contactArray.get(i).getPhoneNumber());
@@ -84,7 +87,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         for(int i = 0; i < databaseArray.size(); i++){
 
                             if(databaseArray.get(i).getNumber().equals(number)){
-                                Toast.makeText(context, "In database Contact List " + number, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "In database Contact List " + number, Toast.LENGTH_SHORT).show();
                                 unknownCall = 1;
                                 break;
                             }
@@ -101,11 +104,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
+                System.out.println(lastState);
+
                 checked = 0;
                 MainActivity.getInstace().stopPop();
                 if(number != null){
                     counter = 0;
-                    if(call == 0){
+                    if(call == 0 && lastState.equals("RINGING")){
                         Intent goIntent = new Intent(context, MainActivity.class);
                         goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(goIntent);
