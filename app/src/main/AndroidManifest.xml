@@ -24,13 +24,25 @@
             android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
 
         <receiver android:name=".IncomingCallReceiver">
+        <intent-filter>
+            <action android:name="android.intent.action.PHONE_STATE" />
+        </intent-filter>
+        </receiver>
+
+        <receiver android:name=".IncomingSMSReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
+
+
         <service
             android:name=".MyService"
+            android:enabled="true"
+            android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
+        <service
+            android:name=".MyServiceSMS"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
     </application>
@@ -42,6 +54,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 

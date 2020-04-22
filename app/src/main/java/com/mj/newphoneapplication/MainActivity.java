@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<DatabaseInfo> datbaseArray;
     private String incomingNumber;
     private String incomingName;
+    private String incomingMessage;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.READ_CONTACTS,
+            Manifest.permission.RECEIVE_SMS
     };
 
 
@@ -300,6 +302,14 @@ public class MainActivity extends AppCompatActivity {
         this.incomingName = incomingName;
     }
 
+    public String getIncomingMessage() {
+        return incomingMessage;
+    }
+
+    public void setIncomingMessage(String incomingMessage) {
+        this.incomingMessage = incomingMessage;
+    }
+
     //overlay 권한받기
     public void checkPermissionOverlay() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
@@ -314,6 +324,11 @@ public class MainActivity extends AppCompatActivity {
     public void startPopup(){
         if(Settings.canDrawOverlays(MainActivity.this)){
             startService(new Intent(MainActivity.this, MyService.class));
+        }}
+
+    public void startPopupSMS(){
+        if(Settings.canDrawOverlays(MainActivity.this)){
+            startService(new Intent(MainActivity.this, MyServiceSMS.class));
         }}
 
     public void stopPop(){ stopService(new Intent(MainActivity.this, MyService.class));}
