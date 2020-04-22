@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private String incomingNumber;
     private String incomingName;
     private String incomingMessage;
+    private ArrayList urls;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -237,6 +238,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //overlay 권한받기
+    public void checkPermissionOverlay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
+            if (!Settings.canDrawOverlays(this)) {              // 체크
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    public void startPopup(){
+        if(Settings.canDrawOverlays(MainActivity.this)){
+            startService(new Intent(MainActivity.this, MyService.class));
+        }}
+
+    public void startPopupSMS(){
+        if(Settings.canDrawOverlays(MainActivity.this)){
+            startService(new Intent(MainActivity.this, MyServiceSMS.class));
+        }}
+
+    public void stopPop(){ stopService(new Intent(MainActivity.this, MyService.class));}
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
+            if (!Settings.canDrawOverlays(this)) {
+                // TODO 동의를 얻지 못했을 경우의 처리
+
+            } else {
+                startService(new Intent(MainActivity.this, MyService.class));
+            }
+        }
+    }
+
+
+    //getter and setter
     private void getContacts(){
         ContentResolver contentResolver = getContentResolver();
         String contactId = null;
@@ -310,42 +352,12 @@ public class MainActivity extends AppCompatActivity {
         this.incomingMessage = incomingMessage;
     }
 
-    //overlay 권한받기
-    public void checkPermissionOverlay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
-            if (!Settings.canDrawOverlays(this)) {              // 체크
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
-            }
-        }
+    public ArrayList getUrls() {
+        return urls;
     }
 
-    public void startPopup(){
-        if(Settings.canDrawOverlays(MainActivity.this)){
-            startService(new Intent(MainActivity.this, MyService.class));
-        }}
-
-    public void startPopupSMS(){
-        if(Settings.canDrawOverlays(MainActivity.this)){
-            startService(new Intent(MainActivity.this, MyServiceSMS.class));
-        }}
-
-    public void stopPop(){ stopService(new Intent(MainActivity.this, MyService.class));}
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
-            if (!Settings.canDrawOverlays(this)) {
-                // TODO 동의를 얻지 못했을 경우의 처리
-
-            } else {
-                startService(new Intent(MainActivity.this, MyService.class));
-            }
-        }
+    public void setUrls(ArrayList urls) {
+        this.urls = urls;
     }
 
 

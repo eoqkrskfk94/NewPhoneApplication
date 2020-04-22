@@ -15,12 +15,15 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MyServiceSMS extends Service {
 
     WindowManager wm;
     View mView;
     String message;
     String name;
+    ArrayList urls;
     private WindowManager.LayoutParams params;
     private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
     private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
@@ -37,6 +40,7 @@ public class MyServiceSMS extends Service {
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         name = MainActivity.getInstace().getIncomingName();
         message = MainActivity.getInstace().getIncomingMessage();
+        urls = MainActivity.getInstace().getUrls();
 
 
         params = new WindowManager.LayoutParams(
@@ -54,10 +58,18 @@ public class MyServiceSMS extends Service {
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
         mView = inflate.inflate(R.layout.view_in_service_sms, null);
         mView.setOnTouchListener(mViewTouchListener);
+
         final TextView messageView = (TextView) mView.findViewById(R.id.MessageView);
         final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
+        final TextView urlView = (TextView) mView.findViewById(R.id.UrlView);
+        String url = "";
+        for (int i = 0; i < urls.size(); i++) {
+            url += urls.get(i).toString();
+            url += " ";
+        }
         nameView.setText(name);
         messageView.setText(message);
+        urlView.setText(url);
         //final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
         final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 

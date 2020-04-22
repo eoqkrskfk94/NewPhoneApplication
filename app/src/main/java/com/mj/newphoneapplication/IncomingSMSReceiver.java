@@ -7,22 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-import android.util.Log;
 import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IncomingSMSReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "IncomingSMSReceiver";
-//
-//    private final String serviceProviderNumber;
-//    private final String serviceProviderSmsCondition;
-//
-//    private Listener listener;
-//
-//    public IncomingSMSReceiver(String serviceProviderNumber, String serviceProviderSmsCondition) {
-//        this.serviceProviderNumber = serviceProviderNumber;
-//        this.serviceProviderSmsCondition = serviceProviderSmsCondition;
-//    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,6 +26,8 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                     smsBody += smsMessage.getMessageBody();
 
                     Toast.makeText(context, smsSender  + smsBody, Toast.LENGTH_SHORT).show();
+                    ArrayList urls = pullLinks(smsBody);
+                    MainActivity.getInstace().setUrls(urls);
                     MainActivity.getInstace().setIncomingName(smsSender);
                     MainActivity.getInstace().setIncomingMessage(smsBody);
                     MainActivity.getInstace().startPopupSMS();
@@ -56,20 +49,24 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                 }
             }
 
-//            if (smsSender.equals(serviceProviderNumber) && smsBody.startsWith(serviceProviderSmsCondition)) {
-//                if (listener != null) {
-//                    listener.onTextReceived(smsBody);
-//                }
-//            }
         }
     }
 
-//    void setListener(Listener listener) {
-//        this.listener = listener;
-//    }
-//
-//    interface Listener {
-//        void onTextReceived(String text);
-//    }
+    public static ArrayList pullLinks(String text) {
+        ArrayList links = new ArrayList();
+
+        String regex = "\\(?\\b(http://|www[.]|https://)[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(text);
+        while(m.find()) {
+            String urlStr = m.group();
+            if (urlStr.startsWith("(") && urlStr.endsWith(")")){
+                urlStr = urlStr.substring(1, urlStr.length() - 1);
+            }
+            links.add(urlStr);
+        }
+        return links;
+    }
+
 }
 
