@@ -17,6 +17,10 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        ArrayList<UrlInfo> urlInfos = MainActivity.getInstace().getUrlArray();
+
+
         if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
             String smsSender = "";
             String smsBody = "";

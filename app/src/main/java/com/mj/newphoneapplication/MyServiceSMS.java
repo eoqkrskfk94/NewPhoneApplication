@@ -24,9 +24,10 @@ public class MyServiceSMS extends Service {
     String message;
     String name;
     ArrayList urls;
+    ArrayList<UrlInfo> databseUrls;
     private WindowManager.LayoutParams params;
-    private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
-    private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
+    private float START_Y;							//움직이기 위해 터치한 시작 점
+    private int PREV_Y;								//움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
 
 
@@ -41,6 +42,7 @@ public class MyServiceSMS extends Service {
         name = MainActivity.getInstace().getIncomingName();
         message = MainActivity.getInstace().getIncomingMessage();
         urls = MainActivity.getInstace().getUrls();
+        databseUrls = MainActivity.getInstace().getUrlArray();
 
 
         params = new WindowManager.LayoutParams(
@@ -62,8 +64,15 @@ public class MyServiceSMS extends Service {
         final TextView messageView = (TextView) mView.findViewById(R.id.MessageView);
         final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
         final TextView urlView = (TextView) mView.findViewById(R.id.UrlView);
+        final TextView checkUrlView = (TextView) mView.findViewById(R.id.checkUrlView);
         String url = "";
+        checkUrlView.setText("");
         for (int i = 0; i < urls.size(); i++) {
+            for (int j = 0; j < databseUrls.size(); j++){
+                if (urls.get(i).toString().contains(databseUrls.get(i).getUrl())){
+                    checkUrlView.setText("In database");
+                }
+            }
             url += urls.get(i).toString();
             url += " ";
         }

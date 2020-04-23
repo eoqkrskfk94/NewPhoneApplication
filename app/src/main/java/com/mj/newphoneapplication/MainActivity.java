@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity ins;
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
+    private ArrayList<UrlInfo> urlArray;
+
     private String incomingNumber;
     private String incomingName;
     private String incomingMessage;
@@ -91,6 +93,37 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }
+
+        if(urlArray == null){
+            urlArray = new ArrayList<UrlInfo>();
+            db.collection("banned_urls")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    UrlInfo urlInfo = new UrlInfo();
+                                    urlInfo.setUrl(document.getId());
+                                    urlInfo.setName(document.getData().get("이름").toString());
+                                    urlInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+                                    urlArray.add(urlInfo);
+
+                                }
+
+
+                            } else {
+                                Log.w("Bad", "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+        }
+
+
+
+
+
+
 
 
         //앱 권한 받기 기능
@@ -326,6 +359,10 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<DatabaseInfo> getDatbaseArray() {
         return datbaseArray;
+    }
+
+    public ArrayList<UrlInfo> getUrlArray() {
+        return urlArray;
     }
 
     public String getIncomingNumber() {
