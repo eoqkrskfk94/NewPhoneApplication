@@ -69,6 +69,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ins = this;
+        Button goUdpdatePage = (Button)findViewById(R.id.goUpdatebtn);
+
+        goUdpdatePage.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                startActivity(intent);
+            }
+        });
+
         if(datbaseArray == null){
             datbaseArray = new ArrayList<DatabaseInfo>();
             db.collection("entities")
