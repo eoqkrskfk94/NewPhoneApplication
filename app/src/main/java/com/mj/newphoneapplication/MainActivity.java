@@ -150,93 +150,6 @@ public class MainActivity extends AppCompatActivity {
         return ins;
     }
 
-    public void updateTheTextView(final String t) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                TextView number = (TextView) findViewById(R.id.numberView);
-                number.setText(t);
-            }
-        });
-    }
-
-    public void updateTheBacground(final int level) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                ConstraintLayout layout = (ConstraintLayout)findViewById(R.id.background);
-                TextView textView = (TextView)findViewById(R.id.dangertxt);
-                ImageView box = (ImageView)findViewById(R.id.whitebox);
-                if(level == -1){
-                    layout.setBackgroundColor(Color.rgb(255, 255, 255));
-                    box.setVisibility(View.VISIBLE);
-                }
-                else if(level == 0){
-                    layout.setBackgroundColor(Color.rgb(154, 209, 89));
-                    textView.setText("안전");
-                    box.setVisibility(View.INVISIBLE);
-
-                }
-
-                else if(level == 1){
-                    layout.setBackgroundColor(Color.rgb(242, 228, 34));
-                    textView.setText("양호");
-                    box.setVisibility(View.INVISIBLE);
-
-                }
-
-                else if(level == 2){
-                    layout.setBackgroundColor(Color.rgb(252, 166, 68));
-                    textView.setText("주의");
-                }
-
-                else if(level == 3){
-                    layout.setBackgroundColor(Color.rgb(252, 114, 68));
-                    textView.setText("위험");
-                }
-            }
-        });
-    }
-
-    public void updateTheTimeView(final int sec, final int unknownCall) {
-        MainActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                TextView call_time = (TextView) findViewById(R.id.timetxt);
-                if(sec == 0){
-                    call_time.setText("");
-                }
-                else{
-                    LocalTime timeOfDay = LocalTime.ofSecondOfDay(sec);
-                    String time = timeOfDay.toString();
-
-                    call_time.setText(time);
-
-                    //진동
-                    final Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-
-                    if(unknownCall == 1){
-                        if(sec == 1){
-                            updateTheBacground(1);
-                        }
-
-                        else if(sec == 10){
-                            //System.out.println("Vibrate");
-                            //vibrator.vibrate(1000);
-                            updateTheBacground(2);
-                        }
-
-                        else if(sec == 15){
-                            updateTheBacground(3);
-                        }
-                    }
-                    else{
-                        updateTheBacground(0);
-                    }
-
-
-                }
-
-            }
-        });
-    }
 
     public void checkPermission(){
         //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
@@ -282,18 +195,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    public void startPopup(){
-        if(Settings.canDrawOverlays(MainActivity.this)){
-            startService(new Intent(MainActivity.this, MyService.class));
-        }}
-
-    public void startPopupSMS(){
-        if(Settings.canDrawOverlays(MainActivity.this)){
-            startService(new Intent(MainActivity.this, MyServiceSMS.class));
-        }}
-
-    public void stopPop(){ stopService(new Intent(MainActivity.this, MyService.class));}
 
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -364,40 +265,6 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<UrlInfo> getUrlArray() {
         return urlArray;
     }
-
-    public String getIncomingNumber() {
-        return incomingNumber;
-    }
-
-    public void setIncomingNumber(String incomingNumber) {
-        this.incomingNumber = incomingNumber;
-    }
-
-    public String getIncomingName() {
-        return incomingName;
-    }
-
-    public void setIncomingName(String incomingName) {
-        this.incomingName = incomingName;
-    }
-
-    public String getIncomingMessage() {
-        return incomingMessage;
-    }
-
-    public void setIncomingMessage(String incomingMessage) {
-        this.incomingMessage = incomingMessage;
-    }
-
-    public ArrayList getUrls() {
-        return urls;
-    }
-
-    public void setUrls(ArrayList urls) {
-        this.urls = urls;
-    }
-
-
 
 
 }
