@@ -130,12 +130,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-
-
-
-
         //앱 권한 받기 기능
         checkPermission();
         checkPermissionOverlay();
@@ -147,10 +141,6 @@ public class MainActivity extends AppCompatActivity {
                 getContacts();
             }
         }
-
-
-
-
 
     }
 

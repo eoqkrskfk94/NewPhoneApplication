@@ -4,10 +4,10 @@ package com.mj.newphoneapplication;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,29 +16,42 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 
 public class MyService extends Service {
 
     WindowManager wm;
     View mView;
-    String number;
-    String name;
+    static String number = "";
+    static String name = "";
     private WindowManager.LayoutParams params;
     private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
     private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
-
+    private TextView nameView;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null; }
 
     @Override
-    public IBinder onBind(Intent intent) { return null; }
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        number = (String) intent.getExtras().get("incomingNumber");
+        name = (String) intent.getExtras().get("incomingName");
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        number = MainActivity.getInstace().getIncomingNumber();
-        name = MainActivity.getInstace().getIncomingName();
 
 
         params = new WindowManager.LayoutParams(
@@ -57,24 +70,46 @@ public class MyService extends Service {
         mView = inflate.inflate(R.layout.view_in_service, null);
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
-        final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
+        nameView = (TextView) mView.findViewById(R.id.NameView);
         textView.setText(number);
-        nameView.setText(name);
-        //final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
-        final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
+        if(name != null) nameView.setText(name);
 
-        final Intent goIntent = new Intent(this, MainActivity.class);
-//        bt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                bt.setImageResource(R.mipmap.ic_launcher_round);
-//                textView.setText("on click!!");
-//                startActivity(goIntent);
-//                stopSelf();
-//
-//            }
-//        });
+        db.collection("entities")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                if(document.getId().equals(number)){
+                                    System.out.println("works");
+                                    name = document.getData().get("이름").toString();
+                                    nameView.setText(name);
+                                    break;
+                                }
+
+                                DatabaseInfo databaseInfo = new DatabaseInfo();
+                                databaseInfo.setNumber(document.getId());
+                                databaseInfo.setName(document.getData().get("이름").toString());
+                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+
+                            }
+
+                            if(name == null) nameView.setText("모르는 번호");
+                            System.out.println(name);
+
+
+                        } else {
+                            Log.w("Bad", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
+
+
+        final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
         cancel.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -84,6 +119,14 @@ public class MyService extends Service {
             }
         });
         wm.addView(mView, params);
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
     }
 
     @Override
@@ -142,6 +185,7 @@ public class MyService extends Service {
         if(params.y < -450) params.y = -450;
         System.out.println(params.y);
     }
+
 
 
 }

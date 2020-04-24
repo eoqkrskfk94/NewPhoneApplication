@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,7 +16,15 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 
 public class MyServiceSMS extends Service {
 
@@ -35,14 +44,14 @@ public class MyServiceSMS extends Service {
     public IBinder onBind(Intent intent) { return null; }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        name = MainActivity.getInstace().getIncomingName();
-        message = MainActivity.getInstace().getIncomingMessage();
-        urls = MainActivity.getInstace().getUrls();
-        databseUrls = MainActivity.getInstace().getUrlArray();
+        name = (String) intent.getExtras().get("incomingSender");
+        message = (String) intent.getExtras().get("incomingBody");
+        urls = (ArrayList) intent.getExtras().get("incomingUrls");
+
 
 
         params = new WindowManager.LayoutParams(
@@ -65,35 +74,47 @@ public class MyServiceSMS extends Service {
         final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
         final TextView urlView = (TextView) mView.findViewById(R.id.UrlView);
         final TextView checkUrlView = (TextView) mView.findViewById(R.id.checkUrlView);
-        String url = "";
+        final String[] url = {""};
         checkUrlView.setText("");
-        for (int i = 0; i < urls.size(); i++) {
-            for (int j = 0; j < databseUrls.size(); j++){
-                if (urls.get(i).toString().contains(databseUrls.get(i).getUrl())){
-                    checkUrlView.setText("In database");
-                }
-            }
-            url += urls.get(i).toString();
-            url += " ";
-        }
+
+        db.collection("banned_urls")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+
+                                for (int i = 0; i < urls.size(); i++) {
+
+                                    if (urls.get(i).toString().contains(document.getId())){
+                                        System.out.println(urls.get(i).toString());
+                                        checkUrlView.setText("In database");
+                                        url[0] += document.getId();
+                                        url[0] += " ";
+                                    }
+                                }
+
+                                UrlInfo urlInfo = new UrlInfo();
+                                urlInfo.setUrl(document.getId());
+                                urlInfo.setName(document.getData().get("이름").toString());
+                                urlInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+
+                            }
+
+
+                        } else {
+                            Log.w("Bad", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
         nameView.setText(name);
         messageView.setText(message);
-        urlView.setText(url);
-        //final ImageButton bt =  (ImageButton) mView.findViewById(R.id.bt);
+        urlView.setText(url[0]);
         final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
-        final Intent goIntent = new Intent(this, MainActivity.class);
-//        bt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                bt.setImageResource(R.mipmap.ic_launcher_round);
-//                textView.setText("on click!!");
-//                startActivity(goIntent);
-//                stopSelf();
-//
-//            }
-//        });
 
         cancel.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -103,6 +124,15 @@ public class MyServiceSMS extends Service {
             }
         });
         wm.addView(mView, params);
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
     }
 
     @Override

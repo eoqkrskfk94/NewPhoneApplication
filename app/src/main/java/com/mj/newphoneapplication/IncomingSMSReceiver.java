@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
@@ -14,11 +15,13 @@ import java.util.regex.Pattern;
 
 public class IncomingSMSReceiver extends BroadcastReceiver {
 
+    private String incomingSmsSender;
+    private String incomingSmsBody;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        ArrayList<UrlInfo> urlInfos = MainActivity.getInstace().getUrlArray();
+        //ArrayList<UrlInfo> urlInfos = MainActivity.getInstace().getUrlArray();
 
 
         if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
@@ -31,10 +34,17 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
 
                     Toast.makeText(context, smsSender  + smsBody, Toast.LENGTH_SHORT).show();
                     ArrayList urls = pullLinks(smsBody);
-                    MainActivity.getInstace().setUrls(urls);
-                    MainActivity.getInstace().setIncomingName(smsSender);
-                    MainActivity.getInstace().setIncomingMessage(smsBody);
-                    MainActivity.getInstace().startPopupSMS();
+
+                    if(Settings.canDrawOverlays(context)){
+                        Intent serviceIntent = new Intent(context, MyServiceSMS.class);
+                        serviceIntent.putExtra("incomingSender",smsSender);
+                        serviceIntent.putExtra("incomingBody",smsBody);
+                        serviceIntent.putExtra("incomingUrls",urls);
+                        context.startService(serviceIntent);
+                    }
+
+
+
                 }
             } else {
                 Bundle smsBundle = intent.getExtras();
@@ -47,9 +57,16 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                     for (int i = 0; i < messages.length; i++) {
                         messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                         smsBody += messages[i].getMessageBody();
-                        MainActivity.getInstace().startPopupSMS();
                     }
                     smsSender = messages[0].getOriginatingAddress();
+
+                    if(Settings.canDrawOverlays(context)){
+                        Intent serviceIntent = new Intent(context, MyServiceSMS.class);
+                        serviceIntent.putExtra("incomingNumber",smsSender);
+                        serviceIntent.putExtra("incomingName",smsBody);
+                        context.startService(serviceIntent);
+                    }
+
                 }
             }
 
