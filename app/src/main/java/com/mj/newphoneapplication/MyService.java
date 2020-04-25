@@ -46,8 +46,12 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         number = (String) intent.getExtras().get("incomingNumber");
         name = (String) intent.getExtras().get("incomingName");
+
+
+
 
 
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

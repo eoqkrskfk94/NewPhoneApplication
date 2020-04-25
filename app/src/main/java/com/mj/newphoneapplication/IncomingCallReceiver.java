@@ -10,8 +10,6 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.android.internal.telephony.ITelephony;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,7 +17,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
@@ -37,7 +34,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
     private String incomingNumber;
     private String incomingName;
-    private String incomingMessage;
 
     private ArrayList<DatabaseInfo> databaseArray;
 

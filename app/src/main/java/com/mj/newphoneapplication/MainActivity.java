@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
     private ArrayList<UrlInfo> urlArray;
-
+    long backKeyPressedTime;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -98,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
         if(datbaseArray == null){
             datbaseArray = new ArrayList<DatabaseInfo>();
             db.collection("entities")
@@ -154,6 +153,16 @@ public class MainActivity extends AppCompatActivity {
         //앱 권한 받기 기능
         checkPermission();
         checkPermissionOverlay();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
+            }
+        }
 
         //연락처 가져오기
         if(contactArray == null){
@@ -164,6 +173,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //1번째 백버튼 클릭
+        if(System.currentTimeMillis()>backKeyPressedTime+2000){
+            backKeyPressedTime = System.currentTimeMillis();
+            Toast.makeText(this, "뒤로 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
+        //2번째 백버튼 클릭 (종료)
+        else{
+            AppFinish();
+        }
+    }
+
+    //앱종료
+    public void AppFinish(){
+        finish();
+        System.exit(0);
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+
+
 
 
 
@@ -227,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 // TODO 동의를 얻지 못했을 경우의 처리
 
             } else {
-                startService(new Intent(MainActivity.this, MyService.class));
+
             }
         }
     }
