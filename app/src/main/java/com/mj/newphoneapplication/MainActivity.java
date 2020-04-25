@@ -2,9 +2,10 @@ package com.mj.newphoneapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import pl.droidsonroids.gif.GifImageView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -13,16 +14,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +28,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.mj.newphoneapplication.Fragments.MessageFragment;
+import com.mj.newphoneapplication.Fragments.PhoneFragment;
+import com.mj.newphoneapplication.Fragments.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<DatabaseInfo> datbaseArray;
     private ArrayList<UrlInfo> urlArray;
 
-    private String incomingNumber;
-    private String incomingName;
-    private String incomingMessage;
-    private ArrayList urls;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -53,21 +51,54 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.RECEIVE_SMS
     };
 
+    ChipNavigationBar chipNavigationBar;
+
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction;
+
+    PhoneFragment phoneFragment = new PhoneFragment();
+    MessageFragment messageFragment = new MessageFragment();
+    SearchFragment searchFragment = new SearchFragment();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ins = this;
-        Button goUdpdatePage = (Button)findViewById(R.id.goUpdatebtn);
 
-        goUdpdatePage.setOnClickListener(new Button.OnClickListener(){
+        chipNavigationBar = findViewById(R.id.bottomNav);
+
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, phoneFragment).commitAllowingStateLoss();
+
+        chipNavigationBar.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                startActivity(intent);
+            public void onItemSelected(int id) {
+                Fragment fragment = null;
+                switch (id){
+                    case R.id.phone:
+                        fragment = new PhoneFragment();
+                        break;
+                    case R.id.message:
+                        fragment = new MessageFragment();
+                        break;
+                    case R.id.search:
+                        fragment = new SearchFragment();
+                        break;
+                }
+
+                if(fragment!= null){
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout, fragment)
+                            .commit();
+                }
             }
         });
+
+
+
 
         if(datbaseArray == null){
             datbaseArray = new ArrayList<DatabaseInfo>();

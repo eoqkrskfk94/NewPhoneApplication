@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cnb_unselectedColor = "#fff"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/phone"
+        android:icon="@drawable/phone"
+        android:title="최근기록"
+        app:cnb_backgroundColor = "#2C4FFF"
+        app:cnb_iconColor = "#fff"
+        app:cnb_textColor = "#fff"
+        />
+
+    <item
+        android:id="@+id/message"
+        android:icon="@drawable/message"
+        android:title="메시지"
+        app:cnb_backgroundColor = "#2C4FFF"
+        app:cnb_iconColor = "#fff"
+        app:cnb_textColor = "#fff"
+        />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/search"
+        android:title="   검 색   "
+        app:cnb_backgroundColor = "#2C4FFF"
+        app:cnb_iconColor = "#fff"
+        app:cnb_textColor = "#fff"
+        />
+
+</menu>
