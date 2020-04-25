@@ -6,15 +6,15 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -111,6 +111,7 @@ public class CallActivity extends AppCompatActivity {
     }
 
     public void updateTheTimeView(final int sec, final int unknownCall) {
+        final Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         CallActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 TextView call_time = (TextView) findViewById(R.id.timetxt);
@@ -123,22 +124,27 @@ public class CallActivity extends AppCompatActivity {
 
                     call_time.setText(time);
 
-                    //진동
-                    final Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-
                     if(unknownCall == 1){
                         if(sec == 1){
                             updateTheBacground(1);
                         }
 
                         else if(sec == 10){
-                            //System.out.println("Vibrate");
-                            //vibrator.vibrate(1000);
                             updateTheBacground(2);
+                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                            else
+                                vibrator.vibrate(1000);
+
                         }
 
                         else if(sec == 15){
                             updateTheBacground(3);
+                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                            else
+                                vibrator.vibrate(1000);
+
                         }
                     }
                     else{
