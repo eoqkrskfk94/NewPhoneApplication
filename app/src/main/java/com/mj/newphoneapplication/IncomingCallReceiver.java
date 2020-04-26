@@ -153,7 +153,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 CallActivity.getInstace().updateTheTimeView(0,unknownCall);
                 CallActivity.getInstace().updateTheBacground(-1);
                 CallActivity.getInstace().stopTimer();
-                CallActivity.getInstace().finish();
+                CallActivity.getInstace().endCall();
             }
 
 

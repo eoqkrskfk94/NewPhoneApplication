@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
@@ -106,6 +107,11 @@ public class CallActivity extends AppCompatActivity {
                     layout.setBackgroundColor(Color.rgb(252, 114, 68));
                     textView.setText("위험");
                 }
+
+                else if(level == 4){
+                    layout.setBackgroundColor(Color.rgb(181, 181, 181));
+                    textView.setText("통화종료");
+                }
             }
         });
     }
@@ -174,8 +180,22 @@ public class CallActivity extends AppCompatActivity {
         this.incomingName = incomingName;
     }
 
-    public  void stopTimer(){
+    public void stopTimer(){
         tt.cancel();
+    }
+
+    public void endCall(){
+
+        updateTheBacground(4);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // Actions to do after 5 seconds
+                finish();
+            }
+        }, 2500);
+
     }
 
 

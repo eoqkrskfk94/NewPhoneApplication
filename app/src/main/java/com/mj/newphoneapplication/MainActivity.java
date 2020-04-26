@@ -22,6 +22,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
     private ArrayList<UrlInfo> urlArray;
+    private int current_fragment;
+    private int next_fragment;
     long backKeyPressedTime;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     ChipNavigationBar chipNavigationBar;
-
+    ImageButton menuButton;
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction;
 
@@ -69,9 +73,25 @@ public class MainActivity extends AppCompatActivity {
         ins = this;
 
         chipNavigationBar = findViewById(R.id.bottomNav);
+        menuButton = findViewById(R.id.menuBtn);
+
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                startActivity(intent);
+
+                //액티비티 전환 애니메이션 설정하는 부분
+                overridePendingTransition(R.anim.slide_left,R.anim.slide_left);
+            }
+        });
+
+
+
 
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, phoneFragment).commitAllowingStateLoss();
+        current_fragment = 1;
 
         chipNavigationBar.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
             @Override
@@ -80,20 +100,38 @@ public class MainActivity extends AppCompatActivity {
                 switch (id){
                     case R.id.phone:
                         fragment = new PhoneFragment();
+                        next_fragment = 1;
                         break;
                     case R.id.message:
                         fragment = new MessageFragment();
+                        next_fragment = 2;
                         break;
                     case R.id.search:
                         fragment = new SearchFragment();
+                        next_fragment = 3;
                         break;
                 }
 
                 if(fragment!= null){
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout, fragment)
-                            .commit();
+
+                    if (current_fragment < next_fragment){
+                        current_fragment = next_fragment;
+                        fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right)
+                                .replace(R.id.frameLayout, fragment)
+                                .commit();
+                    }
+
+                    else if (current_fragment > next_fragment){
+                        current_fragment = next_fragment;
+                        fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right,R.anim.exit_to_left)
+                                .replace(R.id.frameLayout, fragment)
+                                .commit();
+                    }
+
                 }
             }
         });
@@ -152,7 +190,10 @@ public class MainActivity extends AppCompatActivity {
 
         //앱 권한 받기 기능
         checkPermission();
+
+
         checkPermissionOverlay();
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = getPackageName();

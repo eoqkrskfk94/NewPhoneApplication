@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#219"
+    android:background="#fff"
     tools:context=".Fragments.PhoneFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="통화기록 화면"
-        android:textColor="#fff"
+        android:textColor="#219"
         android:textSize="30sp"
 
         />
