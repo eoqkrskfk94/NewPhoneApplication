@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 //액티비티 전환 애니메이션 설정하는 부분
-                overridePendingTransition(R.anim.slide_left,R.anim.slide_left);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
+
             }
         });
 
