@@ -38,7 +38,7 @@ public class MyService extends Service {
     private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
     private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
-    private TextView nameView;
+    private static TextView nameView;
     @Override
     public IBinder onBind(Intent intent) {
         return null; }
@@ -74,41 +74,42 @@ public class MyService extends Service {
         mView = inflate.inflate(R.layout.view_in_service, null);
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
-        nameView = (TextView) mView.findViewById(R.id.NameView);
+        nameView = (TextView) mView.findViewById(R.id.nameView);
         textView.setText(number);
         if(name != null) nameView.setText(name);
 
-        db.collection("entities")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                if(document.getId().equals(number)){
-                                    System.out.println("works");
-                                    name = document.getData().get("이름").toString();
-                                    nameView.setText(name);
-                                    break;
-                                }
-
-                                DatabaseInfo databaseInfo = new DatabaseInfo();
-                                databaseInfo.setNumber(document.getId());
-                                databaseInfo.setName(document.getData().get("이름").toString());
-                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-
-                            }
-
-                            if(name == null) nameView.setText("모르는 번호");
-                            System.out.println(name);
-
-
-                        } else {
-                            Log.w("Bad", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+//        db.collection("entities")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//
+//                                if(document.getId().equals(number)){
+//                                    System.out.println("works");
+//                                    name = document.getData().get("이름").toString();
+//                                    nameView.setText(name);
+//                                    break;
+//                                }
+//
+//                                DatabaseInfo databaseInfo = new DatabaseInfo();
+//                                databaseInfo.setNumber(document.getId());
+//                                databaseInfo.setName(document.getData().get("이름").toString());
+//                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+//
+//                            }
+//
+//                            if(name == null) {
+//                                name = "모르는 번호";
+//                                nameView.setText("모르는 번호");
+//                            }
+//
+//                        } else {
+//                            Log.w("Bad", "Error getting documents.", task.getException());
+//                        }
+//                    }
+//                });
 
 
 
@@ -190,6 +191,10 @@ public class MyService extends Service {
         System.out.println(params.y);
     }
 
+    public static void setName(String name) {
+        nameView.setText(name);
+        MyService.name = name;
+    }
 
 
 }

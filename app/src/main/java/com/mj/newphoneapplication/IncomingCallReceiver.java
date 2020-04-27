@@ -33,7 +33,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     static String lastState;
 
     private String incomingNumber;
-    private String incomingName;
+    private  String incomingName;
 
     private ArrayList<DatabaseInfo> databaseArray;
 
@@ -41,35 +41,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         //ITelephony telephonyService;
-
-        if(databaseArray == null){
-            databaseArray = new ArrayList<DatabaseInfo>();
-            db.collection("entities")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    DatabaseInfo databaseInfo = new DatabaseInfo();
-                                    databaseInfo.setNumber(document.getId());
-                                    databaseInfo.setName(document.getData().get("이름").toString());
-                                    databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-                                    databaseArray.add(databaseInfo);
-
-                                }
-
-
-                            } else {
-                                Log.w("Bad", "Error getting documents.", task.getException());
-                            }
-                        }
-                    });
-        }
-        else{
-            databaseArray = MainActivity.getInstace().getDatbaseArray();
-        }
-
 
         try{
 
@@ -89,7 +60,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
 
                 if(number != null){
-                    lastState =state;
+                    lastState = state;
                     Boolean exist = contactExists(context,number);
                     if(exist){
                         //Toast.makeText(context, "In Contact List " + number, Toast.LENGTH_SHORT).show();
@@ -98,6 +69,44 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                     }
                     else{
                         //Toast.makeText(context, "Not in Contact List " + number, Toast.LENGTH_SHORT).show();
+                        if(databaseArray == null){
+                            databaseArray = new ArrayList<DatabaseInfo>();
+                            db.collection("entities")
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                                    if(document.getId().equals(number)){
+                                                        System.out.println("works");
+                                                        incomingName = document.getData().get("이름").toString();
+                                                        MyService.setName(incomingName);
+                                                    }
+                                                    DatabaseInfo databaseInfo = new DatabaseInfo();
+                                                    databaseInfo.setNumber(document.getId());
+                                                    databaseInfo.setName(document.getData().get("이름").toString());
+                                                    databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+                                                    databaseArray.add(databaseInfo);
+
+                                                }
+
+                                                if(incomingName == null){
+                                                    incomingName = "모르는 번호";
+                                                    MyService.setName(incomingName);
+                                                }
+
+
+                                            } else {
+                                                Log.w("Bad", "Error getting documents.", task.getException());
+                                            }
+                                        }
+                                    });
+                        }
+                        else{
+                            databaseArray = MainActivity.getInstace().getDatbaseArray();
+                        }
                         unknownCall = 1;
                     }
 
@@ -121,6 +130,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
                 context.stopService(new Intent(context, MyService.class));
 
+                System.out.println(number + lastState);
                 if(number != null){
                     counter = 0;
                     if(lastState.equals("RINGING")){
@@ -130,10 +140,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         goIntent.putExtra("unknownCall",unknownCall);
                         goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(goIntent);
-//                        call++;
-//                        tt = timerTaskMaker();
-//                        final Timer timer = new Timer();
-//                        timer.schedule(tt,0,1000);
+
                     }
 
                 }
@@ -142,13 +149,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
 
                 context.stopService(new Intent(context, MyService.class));
-//                MainActivity.getInstace().stopPop();
-//                tt.cancel();
-//                call = 0;
+
                 CallActivity.getInstace().updateTheTimeView(0,unknownCall);
                 CallActivity.getInstace().updateTheBacground(-1);
 
-                //if(tt != null) tt.cancel();
                 call = 0;
                 CallActivity.getInstace().updateTheTimeView(0,unknownCall);
                 CallActivity.getInstace().updateTheBacground(-1);
@@ -167,8 +171,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         TimerTask tempTask = new TimerTask() {
             @Override
             public void run() {
-                //CallActivity.getInstace().updateTheTimeView(counter,unknownCall);
-                //CallActivity.getInstace().updateTheTextView(number);
                 counter++;
             }
         };

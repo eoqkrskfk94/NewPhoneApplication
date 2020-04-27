@@ -71,7 +71,7 @@ public class MyServiceSMS extends Service {
         mView.setOnTouchListener(mViewTouchListener);
 
         final TextView messageView = (TextView) mView.findViewById(R.id.MessageView);
-        final TextView nameView = (TextView) mView.findViewById(R.id.NameView);
+        final TextView nameView = (TextView) mView.findViewById(R.id.nameView);
         final TextView urlView = (TextView) mView.findViewById(R.id.UrlView);
         final TextView checkUrlView = (TextView) mView.findViewById(R.id.checkUrlView);
         final String[] url = {""};

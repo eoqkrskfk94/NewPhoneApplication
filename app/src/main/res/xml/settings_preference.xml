@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="앱 설정">
 
@@ -21,14 +22,29 @@
             android:entryValues="@array/level"
             android:key="level_list"
             android:summary="강"
-            android:title="탐지 강도 설정" />
+            android:title="탐지 강도 설정"
+            />
 
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="권한 설정">
+    <PreferenceCategory android:title="권한 설정"/>
 
-    </PreferenceCategory>
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:key="overlay"
+        android:title="다른 앱 위에 그리기"
+        android:summary="ON" />
+
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:key="battery"
+        android:title="배터리 사용량 최적화 재외"
+        android:summary="ON" />
+
+
 
 
 

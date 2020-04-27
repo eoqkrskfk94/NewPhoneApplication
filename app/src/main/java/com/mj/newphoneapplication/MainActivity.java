@@ -37,6 +37,7 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.mj.newphoneapplication.Fragments.MessageFragment;
 import com.mj.newphoneapplication.Fragments.PhoneFragment;
 import com.mj.newphoneapplication.Fragments.SearchFragment;
+import com.mj.newphoneapplication.Fragments.SettingPreferenceFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private int current_fragment;
     private int next_fragment;
     long backKeyPressedTime;
+    private Boolean battery;
+    private Boolean overlay;
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -67,32 +71,12 @@ public class MainActivity extends AppCompatActivity {
     MessageFragment messageFragment = new MessageFragment();
     SearchFragment searchFragment = new SearchFragment();
 
-    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ins = this;
-
-        //
-        ImageButton example = findViewById(R.id.backBtn);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        example.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                System.out.println("hello");
-                System.out.println(prefs.getBoolean("vibration_alarm", false));
-                System.out.println(prefs.getBoolean("voice_alarm", false));
-                System.out.println(prefs.getString("level_list", ""));
-                String level = prefs.getString("level_list", "");
-                Toast.makeText(getApplicationContext(), "강도 : "+ level, Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        //
 
         chipNavigationBar = findViewById(R.id.bottomNav);
         menuButton = findViewById(R.id.menuBtn);
@@ -223,10 +207,14 @@ public class MainActivity extends AppCompatActivity {
         checkPermission();
         checkPermissionOverlay();
 
+
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
             Intent intent = new Intent();
             String packageName = getPackageName();
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            battery = pm.isIgnoringBatteryOptimizations(packageName);
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                 intent.setData(Uri.parse("package:" + packageName));
@@ -299,7 +287,8 @@ public class MainActivity extends AppCompatActivity {
 
     //overlay 권한받기
     public void checkPermissionOverlay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   // 마시멜로우 이상일 경우
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            overlay = Settings.canDrawOverlays(this);// 마시멜로우 이상일 경우
             if (!Settings.canDrawOverlays(this)) {              // 체크
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
@@ -376,6 +365,14 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<UrlInfo> getUrlArray() {
         return urlArray;
+    }
+
+    public Boolean getBattery() {
+        return battery;
+    }
+
+    public Boolean getOverlay() {
+        return overlay;
     }
 
 
