@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //액티비티 전환 애니메이션 설정하는 부분
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-
-
             }
         });
 
@@ -138,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //데이터베이스 번호 목록 불러오기
         if(datbaseArray == null){
             datbaseArray = new ArrayList<DatabaseInfo>();
             db.collection("entities")
@@ -164,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
 
+        //데이터베이스 url 목록 불러오기
         if(urlArray == null){
             urlArray = new ArrayList<UrlInfo>();
             db.collection("banned_urls")
@@ -189,11 +188,17 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
 
+        //연락처 가져오기
+        if(contactArray == null){
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                getContacts();
+            }
+        }
+
 
         //앱 권한 받기 기능
         checkPermission();
-
-
         checkPermissionOverlay();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -207,13 +212,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //연락처 가져오기
-        if(contactArray == null){
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-                    == PackageManager.PERMISSION_GRANTED) {
-                getContacts();
-            }
-        }
 
     }
 
@@ -236,10 +234,6 @@ public class MainActivity extends AppCompatActivity {
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
-
-
-
-
 
 
     public static MainActivity  getInstace(){
