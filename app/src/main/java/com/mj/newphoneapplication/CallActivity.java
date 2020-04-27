@@ -2,6 +2,7 @@ package com.mj.newphoneapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import pl.droidsonroids.gif.GifImageView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -79,38 +80,42 @@ public class CallActivity extends AppCompatActivity {
             public void run() {
                 ConstraintLayout layout = (ConstraintLayout)findViewById(R.id.background);
                 TextView textView = (TextView)findViewById(R.id.dangertxt);
-                ImageView box = (ImageView)findViewById(R.id.whitebox);
+                GifImageView gif = (GifImageView)findViewById(R.id.gif);
                 if(level == -1){
                     layout.setBackgroundColor(Color.rgb(255, 255, 255));
-                    box.setVisibility(View.VISIBLE);
+                    gif.setVisibility(View.INVISIBLE);
+
                 }
                 else if(level == 0){
                     layout.setBackgroundColor(Color.rgb(154, 209, 89));
                     textView.setText("안전");
-                    box.setVisibility(View.INVISIBLE);
+                    gif.setVisibility(View.INVISIBLE);
 
                 }
 
                 else if(level == 1){
                     layout.setBackgroundColor(Color.rgb(242, 228, 34));
                     textView.setText("양호");
-                    box.setVisibility(View.INVISIBLE);
+                    gif.setVisibility(View.VISIBLE);
 
                 }
 
                 else if(level == 2){
                     layout.setBackgroundColor(Color.rgb(252, 166, 68));
                     textView.setText("주의");
+                    gif.setVisibility(View.VISIBLE);
                 }
 
                 else if(level == 3){
                     layout.setBackgroundColor(Color.rgb(252, 114, 68));
                     textView.setText("위험");
+                    gif.setVisibility(View.VISIBLE);
                 }
 
                 else if(level == 4){
                     layout.setBackgroundColor(Color.rgb(181, 181, 181));
                     textView.setText("통화종료");
+                    gif.setVisibility(View.INVISIBLE);
                 }
             }
         });
