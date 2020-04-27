@@ -1,21 +1,19 @@
 package com.mj.newphoneapplication;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import pl.droidsonroids.gif.GifImageView;
-
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.time.LocalTime;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,6 +22,7 @@ public class CallActivity extends AppCompatActivity {
 
     private static CallActivity ins;
 
+    SharedPreferences prefs;
 
     private String incomingNumber;
     private String incomingName;
@@ -35,11 +34,14 @@ public class CallActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
+
+
         Intent intent = getIntent();
         incomingNumber = (String) intent.getExtras().get("incomingNumber");
         incomingName = (String) intent.getExtras().get("incomingName");
         unknownCall = (int) intent.getExtras().get("unknownCall");
         ins = this;
+
 
         tt = timerTaskMaker();
         final Timer timer = new Timer();
@@ -125,7 +127,24 @@ public class CallActivity extends AppCompatActivity {
         final Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         CallActivity.this.runOnUiThread(new Runnable() {
             public void run() {
+                prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 TextView call_time = (TextView) findViewById(R.id.timetxt);
+
+                String level = prefs.getString("level_list", "");
+                Boolean vibrate = prefs.getBoolean("vibration_alarm", false);
+                Boolean voice = prefs.getBoolean("voice_alarm", false);
+
+                int call_length[] = {0,0};
+                if(level.equals("약")){
+                    call_length[0] = 10; call_length[1] = 15;
+                }
+                else if(level.equals("중")){
+                    call_length[0] = 20; call_length[1] = 30;
+                }
+                else if(level.equals("강")){
+                    call_length[0] = 30; call_length[1] = 60;
+                }
+
                 if(sec == 0){
                     call_time.setText("");
                 }
@@ -140,22 +159,24 @@ public class CallActivity extends AppCompatActivity {
                             updateTheBacground(1);
                         }
 
-                        else if(sec == 10){
+                        else if(sec == call_length[0]){
                             updateTheBacground(2);
-                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
-                                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-                            else
-                                vibrator.vibrate(1000);
-
+                            if(vibrate){
+                                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                                    vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                                else
+                                    vibrator.vibrate(1000);
+                            }
                         }
 
-                        else if(sec == 15){
+                        else if(sec == call_length[1]){
                             updateTheBacground(3);
-                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
-                                vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-                            else
-                                vibrator.vibrate(1000);
-
+                            if(vibrate){
+                                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                                    vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                                else
+                                    vibrator.vibrate(1000);
+                            }
                         }
                     }
                     else{

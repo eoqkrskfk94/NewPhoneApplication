@@ -12,12 +12,14 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -65,12 +67,32 @@ public class MainActivity extends AppCompatActivity {
     MessageFragment messageFragment = new MessageFragment();
     SearchFragment searchFragment = new SearchFragment();
 
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ins = this;
+
+        //
+        ImageButton example = findViewById(R.id.backBtn);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        example.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                System.out.println("hello");
+                System.out.println(prefs.getBoolean("vibration_alarm", false));
+                System.out.println(prefs.getBoolean("voice_alarm", false));
+                System.out.println(prefs.getString("level_list", ""));
+                String level = prefs.getString("level_list", "");
+                Toast.makeText(getApplicationContext(), "강도 : "+ level, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        //
 
         chipNavigationBar = findViewById(R.id.bottomNav);
         menuButton = findViewById(R.id.menuBtn);
