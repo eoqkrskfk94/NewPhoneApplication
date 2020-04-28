@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
@@ -27,17 +28,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.mj.newphoneapplication.Fragments.MessageFragment;
 import com.mj.newphoneapplication.Fragments.PhoneFragment;
 import com.mj.newphoneapplication.Fragments.SearchFragment;
 import com.mj.newphoneapplication.Fragments.SettingPreferenceFragment;
+import com.mj.newphoneapplication.Items.PhoneParentItem;
+import com.mj.newphoneapplication.Items.PhoneSubItem;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,12 +58,19 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity ins;
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
+    private ArrayList<PhoneSubItem> callLog;
+    private ArrayList<PhoneParentItem> parentCallLog;
     private ArrayList<UrlInfo> urlArray;
     private int current_fragment;
     private int next_fragment;
     long backKeyPressedTime;
     private Boolean battery;
     private Boolean overlay;
+
+    SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy/MM/dd");
+    Date now = new Date();
+
+
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -88,11 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 //액티비티 전환 애니메이션 설정하는 부분
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
-
-
 
 
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -103,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(int id) {
                 Fragment fragment = null;
-                switch (id){
+                switch (id) {
                     case R.id.phone:
                         fragment = new PhoneFragment();
                         next_fragment = 1;
@@ -118,22 +136,20 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-                if(fragment!= null){
+                if (fragment != null) {
 
-                    if (current_fragment < next_fragment){
+                    if (current_fragment < next_fragment) {
                         current_fragment = next_fragment;
                         fragmentManager = getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right)
+                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                                 .replace(R.id.frameLayout, fragment)
                                 .commit();
-                    }
-
-                    else if (current_fragment > next_fragment){
+                    } else if (current_fragment > next_fragment) {
                         current_fragment = next_fragment;
                         fragmentManager = getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right,R.anim.exit_to_left)
+                                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left)
                                 .replace(R.id.frameLayout, fragment)
                                 .commit();
                     }
@@ -143,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //데이터베이스 번호 목록 불러오기
-        if(datbaseArray == null){
+        if (datbaseArray == null) {
             datbaseArray = new ArrayList<DatabaseInfo>();
             db.collection("entities")
                     .get()
@@ -169,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //데이터베이스 url 목록 불러오기
-        if(urlArray == null){
+        if (urlArray == null) {
             urlArray = new ArrayList<UrlInfo>();
             db.collection("banned_urls")
                     .get()
@@ -195,12 +211,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //연락처 가져오기
-        if(contactArray == null){
+        if (contactArray == null) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                     == PackageManager.PERMISSION_GRANTED) {
                 getContacts();
             }
         }
+
+        //최근기록 가져오기
+        if (callLog == null) {
+            callLog = getCallDetails();
+            parentCallLog = new ArrayList<PhoneParentItem>();
+            parentCallLog.add(new PhoneParentItem("오늘", callLog));
+            parentCallLog.add(new PhoneParentItem("내일", callLog));
+        }
+
 
 
         //앱 권한 받기 기능
@@ -208,8 +233,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermissionOverlay();
 
 
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             Intent intent = new Intent();
             String packageName = getPackageName();
@@ -228,56 +252,54 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //1번째 백버튼 클릭
-        if(System.currentTimeMillis()>backKeyPressedTime+2000){
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
             backKeyPressedTime = System.currentTimeMillis();
             Toast.makeText(this, "뒤로 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
         }
         //2번째 백버튼 클릭 (종료)
-        else{
+        else {
             AppFinish();
         }
     }
 
     //앱종료
-    public void AppFinish(){
+    public void AppFinish() {
         finish();
         System.exit(0);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 
 
-    public static MainActivity  getInstace(){
+    public static MainActivity getInstace() {
         return ins;
     }
 
 
-    public void checkPermission(){
+    public void checkPermission() {
         //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return;
 
-        for(String permission : permission_list){
+        for (String permission : permission_list) {
             //권한 허용 여부를 확인한다.
             int chk = checkCallingOrSelfPermission(permission);
 
-            if(chk == PackageManager.PERMISSION_DENIED){
+            if (chk == PackageManager.PERMISSION_DENIED) {
                 //권한 허용을여부를 확인하는 창을 띄운다
-                requestPermissions(permission_list,0);
+                requestPermissions(permission_list, 0);
             }
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==0)
-        {
-            for(int i=0; i<grantResults.length; i++)
-            {
+        if (requestCode == 0) {
+            for (int i = 0; i < grantResults.length; i++) {
                 //허용됬다면
-                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"앱권한설정하세요",Toast.LENGTH_LONG).show();
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
@@ -297,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -313,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //getter and setter
-    private void getContacts(){
+    private void getContacts() {
         ContentResolver contentResolver = getContentResolver();
         String contactId = null;
         String displayName = null;
@@ -355,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //getter and setter
     public ArrayList<ContactInfo> getContactArray() {
         return contactArray;
     }
@@ -363,8 +384,16 @@ public class MainActivity extends AppCompatActivity {
         return datbaseArray;
     }
 
+    public ArrayList<PhoneParentItem> getParentCallLog() {
+        return parentCallLog;
+    }
+
     public ArrayList<UrlInfo> getUrlArray() {
         return urlArray;
+    }
+
+    public ArrayList<PhoneSubItem> getCallLog() {
+        return callLog;
     }
 
     public Boolean getBattery() {
@@ -374,6 +403,68 @@ public class MainActivity extends AppCompatActivity {
     public Boolean getOverlay() {
         return overlay;
     }
+
+    private ArrayList<PhoneSubItem> getCallDetails() {
+
+
+        callLog = new ArrayList<PhoneSubItem>();
+
+        Cursor cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+        int name = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+        int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+        int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+        int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
+
+        int idx = 0;
+        Boolean flag = true;
+        while(cursor.moveToNext() && idx < 20){
+            idx++;
+            PhoneSubItem phoneSubItem = new PhoneSubItem();
+            phoneSubItem.setName(cursor.getString(name));
+            phoneSubItem.setNumber(cursor.getString(number));
+            String callDate = cursor.getString(date);
+            Date callDayTime = new Date(Long.valueOf(callDate));
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            String sample = formatter2.format(now);
+
+            try{
+                Date date1=new SimpleDateFormat("yyyy/MM/dd").parse(sample);
+                Date date2=new SimpleDateFormat("yyyy/MM/dd").parse(formatter.format(callDayTime));
+                System.out.println(new SimpleDateFormat("yyyy/MM/dd").format(callDayTime));
+                long diffInMillies = Math.abs(date1.getTime() - date2.getTime());
+                long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                System.out.println(diff);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+
+            phoneSubItem.setDate(formatter.format(callDayTime));
+            String callType = cursor.getString(type);
+            int dircode = Integer.parseInt(callType);
+            switch(dircode){
+                case CallLog.Calls.OUTGOING_TYPE:
+                    phoneSubItem.setType("OUTGOING");
+                    break;
+                case CallLog.Calls.INCOMING_TYPE:
+                    phoneSubItem.setType("INCOMING");
+                    break;
+                case CallLog.Calls.MISSED_TYPE:
+                    phoneSubItem.setType("MISSED");
+                    break;
+            }
+            callLog.add(phoneSubItem);
+
+        }
+        cursor.close();
+
+        return callLog;
+    }
+
+
 
 
 }
