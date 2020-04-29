@@ -50,6 +50,10 @@
             android:name=".MyServiceSMS"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
+        <service
+            android:name=".CallService"
+            android:enabled="true"
+            android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
     </application>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />

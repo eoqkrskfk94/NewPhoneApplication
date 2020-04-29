@@ -24,14 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 
-public class MyService extends Service {
+public class CallService extends Service {
 
     WindowManager wm;
     View mView;
+
     static String number = "";
     static String name = "";
     private WindowManager.LayoutParams params;
@@ -39,6 +41,7 @@ public class MyService extends Service {
     private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
     private static TextView nameView;
+    private static TextView timeView;
     @Override
     public IBinder onBind(Intent intent) {
         return null; }
@@ -50,6 +53,7 @@ public class MyService extends Service {
         number = (String) intent.getExtras().get("incomingNumber");
         name = (String) intent.getExtras().get("incomingName");
 
+        System.out.println("works!!!!"+name);
 
 
 
@@ -59,7 +63,7 @@ public class MyService extends Service {
 
 
         params = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
@@ -70,47 +74,15 @@ public class MyService extends Service {
 
 
 
-        params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-        mView = inflate.inflate(R.layout.view_in_service, null);
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        mView = inflate.inflate(R.layout.view_in_service_call, null);
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         nameView = (TextView) mView.findViewById(R.id.nameView);
+        timeView = (TextView) mView.findViewById(R.id.timeView);
+
         textView.setText(number);
         if(name != null) nameView.setText(name);
-
-//        db.collection("entities")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//
-//                                if(document.getId().equals(number)){
-//                                    System.out.println("works");
-//                                    name = document.getData().get("이름").toString();
-//                                    nameView.setText(name);
-//                                    break;
-//                                }
-//
-//                                DatabaseInfo databaseInfo = new DatabaseInfo();
-//                                databaseInfo.setNumber(document.getId());
-//                                databaseInfo.setName(document.getData().get("이름").toString());
-//                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-//
-//                            }
-//
-//                            if(name == null) {
-//                                name = "모르는 번호";
-//                                nameView.setText("모르는 번호");
-//                            }
-//
-//                        } else {
-//                            Log.w("Bad", "Error getting documents.", task.getException());
-//                        }
-//                    }
-//                });
-
 
 
 
@@ -187,15 +159,22 @@ public class MyService extends Service {
         //최대값 넘어가지 않게 설정
 
         if(params.y > MAX_Y) params.y = MAX_Y;
-        if(params.y < -450) params.y = -450;
-        System.out.println(params.y);
+        if(params.y < -800) params.y = -800;
     }
 
     public static void setName(String name) {
         nameView.setText(name);
-        MyService.name = name;
+        CallService.name = name;
     }
 
+    public static void setTime(int sec) {
 
+        if (sec == 0) {
+            timeView.setText("00:00");
+        } else {
+            LocalTime timeOfDay = LocalTime.ofSecondOfDay(sec);
+            String time = timeOfDay.toString();
+            timeView.setText(time);
+        }
+    }
 }
-

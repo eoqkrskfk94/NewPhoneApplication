@@ -9,7 +9,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,6 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
@@ -33,7 +33,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     static String lastState;
 
     private String incomingNumber;
-    private  String incomingName;
+    private static String incomingName;
 
     private ArrayList<DatabaseInfo> databaseArray;
 
@@ -134,13 +134,25 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 if(number != null){
                     counter = 0;
                     if(lastState.equals("RINGING")){
-                        Intent goIntent = new Intent(context, CallActivity.class);
-                        goIntent.putExtra("incomingNumber",incomingNumber);
-                        goIntent.putExtra("incomingName",incomingName);
-                        goIntent.putExtra("unknownCall",unknownCall);
-                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(goIntent);
 
+                        if(Settings.canDrawOverlays(context)){
+                            System.out.println("why not come out");
+                            Intent serviceIntent = new Intent(context, CallService.class);
+                            serviceIntent.putExtra("incomingNumber",incomingNumber);
+                            serviceIntent.putExtra("incomingName",incomingName);
+                            context.startService(serviceIntent);
+                        }
+
+//                        Intent goIntent = new Intent(context, CallActivity.class);
+//                        goIntent.putExtra("incomingNumber",incomingNumber);
+//                        goIntent.putExtra("incomingName",incomingName);
+//                        goIntent.putExtra("unknownCall",unknownCall);
+//                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        context.startActivity(goIntent);
+
+                        tt = timerTaskMaker();
+                        final Timer timer = new Timer();
+                        timer.schedule(tt, 0, 1000);
                     }
 
                 }
@@ -148,16 +160,19 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             }
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
 
-                context.stopService(new Intent(context, MyService.class));
+                tt.cancel();
 
-                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
-                CallActivity.getInstace().updateTheBacground(-1);
+                context.stopService(new Intent(context, MyService.class));
+                context.stopService(new Intent(context, CallService.class));
+
+//                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
+//                CallActivity.getInstace().updateTheBacground(-1);
 
                 call = 0;
-                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
-                CallActivity.getInstace().updateTheBacground(-1);
-                CallActivity.getInstace().stopTimer();
-                CallActivity.getInstace().endCall();
+//                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
+//                CallActivity.getInstace().updateTheBacground(-1);
+//                CallActivity.getInstace().stopTimer();
+//                CallActivity.getInstace().endCall();
             }
 
 
@@ -171,6 +186,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         TimerTask tempTask = new TimerTask() {
             @Override
             public void run() {
+                if(counter > 1) CallService.setName("counter");
                 counter++;
             }
         };

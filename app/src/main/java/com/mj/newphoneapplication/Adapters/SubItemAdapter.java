@@ -67,19 +67,22 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
         subItemViewHolder.number.setText(phoneSubItem.getNumber());
         subItemViewHolder.date.setText(phoneSubItem.getDate());
-        if(phoneSubItem.getType().equals("OUTGOING")){
-            subItemViewHolder.callType.setImageResource(R.drawable.outcoming_call);
-            subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
-        }
-        else if(phoneSubItem.getType().equals("INCOMING")){
-            subItemViewHolder.callType.setImageResource(R.drawable.incoming_call);
-            subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+        if(phoneSubItem.getType() != null){
+            if(phoneSubItem.getType().equals("OUTGOING")){
+                subItemViewHolder.callType.setImageResource(R.drawable.outcoming_call);
+                subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+            }
+            else if(phoneSubItem.getType().equals("INCOMING")){
+                subItemViewHolder.callType.setImageResource(R.drawable.incoming_call);
+                subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+            }
+
+            else if(phoneSubItem.getType().equals("MISSED")){
+                subItemViewHolder.callType.setImageResource(R.drawable.cancel_call);
+                subItemViewHolder.date.setTextColor(Color.RED);
+            }
         }
 
-        else if(phoneSubItem.getType().equals("MISSED")){
-            subItemViewHolder.callType.setImageResource(R.drawable.cancel_call);
-            subItemViewHolder.date.setTextColor(Color.RED);
-        }
         //subItemViewHolder.callType.setText(phoneSubItem.getType());
 
     }
