@@ -60,10 +60,10 @@
 
             <ImageView
                 android:id="@+id/callTypeView"
-                android:layout_width="wrap_content"
+                android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                app:srcCompat="@drawable/incoming_call" />
+                app:srcCompat="@drawable/cancel_call" />
 
         </LinearLayout>
 

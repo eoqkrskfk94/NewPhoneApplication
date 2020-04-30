@@ -9,6 +9,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,8 +48,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
             number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
-
-
 
 
             if(number != null){
@@ -125,6 +125,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
+                Toast.makeText(context, "In Contact List " + incomingName, Toast.LENGTH_SHORT).show();
+
 
                 checked = 0;
 
@@ -140,6 +142,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                             Intent serviceIntent = new Intent(context, CallService.class);
                             serviceIntent.putExtra("incomingNumber",incomingNumber);
                             serviceIntent.putExtra("incomingName",incomingName);
+                            serviceIntent.putExtra("unknownCall", unknownCall);
                             context.startService(serviceIntent);
                         }
 
@@ -150,9 +153,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 //                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        context.startActivity(goIntent);
 
-                        tt = timerTaskMaker();
-                        final Timer timer = new Timer();
-                        timer.schedule(tt, 0, 1000);
                     }
 
                 }
@@ -160,9 +160,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             }
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
 
-                tt.cancel();
-
-                context.stopService(new Intent(context, MyService.class));
+                //tt.cancel();
+                incomingName = null;
+                CallService.stopTimer();
                 context.stopService(new Intent(context, CallService.class));
 
 //                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
@@ -186,7 +186,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         TimerTask tempTask = new TimerTask() {
             @Override
             public void run() {
-                if(counter > 1) CallService.setName("counter");
                 counter++;
             }
         };

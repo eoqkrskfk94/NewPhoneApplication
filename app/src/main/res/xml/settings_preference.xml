@@ -18,12 +18,12 @@
             android:title="경고음성 위험 알림" />
 
         <ListPreference
+            android:defaultValue="true"
             android:entries="@array/level"
             android:entryValues="@array/level"
             android:key="level_list"
             android:summary="강"
-            android:title="탐지 강도 설정"
-            />
+            android:title="탐지 강도 설정" />
 
 
     </PreferenceCategory>

@@ -4,8 +4,16 @@ package com.mj.newphoneapplication;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,25 +34,36 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import pl.droidsonroids.gif.GifImageView;
 
 public class CallService extends Service {
 
     WindowManager wm;
     View mView;
+    static TimerTask tt;
+    public int counter = 0;
+
+    SharedPreferences prefs;
 
     static String number = "";
     static String name = "";
+    static int unknownCall;
     private WindowManager.LayoutParams params;
-    private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
-    private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
+    private float START_X, START_Y;                            //움직이기 위해 터치한 시작 점
+    private int PREV_X, PREV_Y;                                //움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
     private static TextView nameView;
-    private static TextView timeView;
+    private static TextView call_time;
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null; }
+        return null;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -52,10 +71,7 @@ public class CallService extends Service {
 
         number = (String) intent.getExtras().get("incomingNumber");
         name = (String) intent.getExtras().get("incomingName");
-
-        System.out.println("works!!!!"+name);
-
-
+        unknownCall = (int) intent.getExtras().get("unknownCall");
 
 
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -68,27 +84,30 @@ public class CallService extends Service {
 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        |WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        |WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
-
 
 
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         mView = inflate.inflate(R.layout.view_in_service_call, null);
         mView.setOnTouchListener(mViewTouchListener);
+        call_time = (TextView) mView.findViewById(R.id.timeView);
+
+        tt = timerTaskMaker();
+        final Timer timer = new Timer();
+        timer.schedule(tt, 0, 1000);
+
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         nameView = (TextView) mView.findViewById(R.id.nameView);
-        timeView = (TextView) mView.findViewById(R.id.timeView);
 
         textView.setText(number);
-        if(name != null) nameView.setText(name);
-
+        if (name != null) nameView.setText(name);
 
 
         final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
-        cancel.setOnClickListener(new View.OnClickListener(){
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopSelf();
@@ -109,8 +128,8 @@ public class CallService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(wm != null) {
-            if(mView != null) {
+        if (wm != null) {
+            if (mView != null) {
                 wm.removeView(mView);
                 mView = null;
             }
@@ -119,16 +138,17 @@ public class CallService extends Service {
     }
 
     private View.OnTouchListener mViewTouchListener = new View.OnTouchListener() {
-        @Override public boolean onTouch(View v, MotionEvent event) {
-            switch(event.getAction()) {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:                //사용자 터치 다운이면
-                    if(MAX_X == -1)
+                    if (MAX_X == -1)
                         setMaxPosition();
                     START_Y = event.getRawY();                    //터치 시작 점
                     PREV_Y = params.y;                            //뷰의 시작 점
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int y = (int)(event.getRawY() - START_Y);	//이동한 거리
+                    int y = (int) (event.getRawY() - START_Y);    //이동한 거리
 
                     //터치해서 이동한 만큼 이동 시킨다
                     params.y = PREV_Y + y;
@@ -142,24 +162,20 @@ public class CallService extends Service {
         }
     };
 
-    /**
-     * 뷰의 위치가 화면 안에 있게 최대값을 설정한다
-     */
+
     private void setMaxPosition() {
         DisplayMetrics matrix = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(matrix);		//화면 정보를 가져와서
+        wm.getDefaultDisplay().getMetrics(matrix);        //화면 정보를 가져와서
 
-        MAX_Y = matrix.heightPixels - mView.getHeight();			//y 최대값 설정
+        MAX_Y = matrix.heightPixels - mView.getHeight();            //y 최대값 설정
     }
 
-    /**
-     * 뷰의 위치가 화면 안에 있게 하기 위해서 검사하고 수정한다.
-     */
+
     private void optimizePosition() {
         //최대값 넘어가지 않게 설정
 
-        if(params.y > MAX_Y) params.y = MAX_Y;
-        if(params.y < -800) params.y = -800;
+        if (params.y > MAX_Y) params.y = MAX_Y;
+        if (params.y < -800) params.y = -800;
     }
 
     public static void setName(String name) {
@@ -167,14 +183,123 @@ public class CallService extends Service {
         CallService.name = name;
     }
 
-    public static void setTime(int sec) {
+    final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            updateTheTimeView(counter, unknownCall);
+        }
+    };
+
+
+    public TimerTask timerTaskMaker() {
+        TimerTask tempTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+
+                counter++;
+            }
+        };
+        return tempTask;
+    }
+
+    public static void stopTimer() {
+        tt.cancel();
+    }
+
+    public void updateTheTimeView(final int sec, final int unknownCall) {
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        String level = prefs.getString("level_list", "");
+        Boolean vibrate = prefs.getBoolean("vibration_alarm", false);
+        Boolean voice = prefs.getBoolean("voice_alarm", false);
+
+        int call_length[] = {0, 0};
+        if (level.equals("")) {
+            call_length[0] = 30;
+            call_length[1] = 60;
+        }else if (level.equals("약")) {
+            call_length[0] = 30;
+            call_length[1] = 60;
+        } else if (level.equals("중")) {
+            call_length[0] = 20;
+            call_length[1] = 30;
+        } else if (level.equals("강")) {
+            call_length[0] = 10;
+            call_length[1] = 15;
+
+        }
 
         if (sec == 0) {
-            timeView.setText("00:00");
+            call_time.setText("00:00");
         } else {
             LocalTime timeOfDay = LocalTime.ofSecondOfDay(sec);
             String time = timeOfDay.toString();
-            timeView.setText(time);
+
+            call_time.setText(time);
+
+            if (unknownCall == 1) {
+                if (sec == 1) {
+                    updateTheBacground(1);
+                } else if (sec == call_length[0]) {
+                    updateTheBacground(2);
+                    if (vibrate) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                            vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        else
+                            vibrator.vibrate(1000);
+                    }
+                } else if (sec == call_length[1]) {
+                    updateTheBacground(3);
+                    if (vibrate) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                            vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        else
+                            vibrator.vibrate(1000);
+                    }
+                }
+            } else {
+                updateTheBacground(0);
+            }
+
+
+        }
+
+    }
+
+    public void updateTheBacground(final int level) {
+        ConstraintLayout layout = (ConstraintLayout)mView.findViewById(R.id.callBoxView);
+        TextView textView = (TextView)mView.findViewById(R.id.dangertxt);
+        GifImageView gif = (GifImageView)mView.findViewById(R.id.gif);
+        if (level == -1) {
+            //layout.setBackground();
+            gif.setVisibility(View.INVISIBLE);
+
+        } else if (level == 0) {
+            layout.setBackgroundResource(R.drawable.call_box1);
+            textView.setText("안전");
+            gif.setVisibility(View.INVISIBLE);
+
+        } else if (level == 1) {
+            layout.setBackgroundResource(R.drawable.call_box2);
+            textView.setText("양호");
+            gif.setVisibility(View.VISIBLE);
+
+        } else if (level == 2) {
+            layout.setBackgroundResource(R.drawable.call_box3);
+            textView.setText("주의");
+            gif.setVisibility(View.VISIBLE);
+        } else if (level == 3) {
+            layout.setBackgroundResource(R.drawable.call_box4);
+            textView.setText("위험");
+            gif.setVisibility(View.VISIBLE);
+        } else if (level == 4) {
+            layout.setBackgroundResource(R.drawable.call_box5);
+            textView.setText("통화종료");
+            gif.setVisibility(View.INVISIBLE);
         }
     }
+
+
 }

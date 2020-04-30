@@ -2,6 +2,7 @@ package com.mj.newphoneapplication.Adapters;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,7 @@ import java.util.Date;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemViewHolder> {
-
-
+public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private static int TYPE_DATE = 1;
@@ -39,51 +38,72 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
 
     @NonNull
     @Override
-    public SubItemViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sub_items_log, viewGroup, false);
-        return new SubItemViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        View view;
+        if ( viewType == TYPE_DATE){
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.items_title, viewGroup, false);
+            return new TimeViewHolder(view);
+        }else{
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sub_items_log, viewGroup, false);
+            return new SubItemViewHolder(view);
+        }
+
+
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//
-//
-//
-//        if () {
-//            return TYPE_DATE;
-//        } else {
-//            return TYPE_LOG;
-//        }
-//    }
+    @Override
+    public int getItemViewType(int position) {
+        if (phoneSubItems.get(position).getNumber() == "") {
+            return TYPE_DATE;
+        } else {
+            return TYPE_LOG;
+        }
+    }
 
     @Override
-    public void onBindViewHolder(@NonNull SubItemViewHolder subItemViewHolder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         PhoneSubItem phoneSubItem = phoneSubItems.get(i);
-        subItemViewHolder.name.setText(phoneSubItem.getName());
-        if(phoneSubItem.getName() == null){
-            subItemViewHolder.name.setText("등록되지 않은 번호");
-            subItemViewHolder.name.setTextColor(Color.parseColor("#9C9C9C"));
+        if(viewHolder instanceof SubItemViewHolder){
+            SubItemViewHolder subItemViewHolder =(SubItemViewHolder)viewHolder;
+            subItemViewHolder.name.setText(phoneSubItem.getName());
+            if(phoneSubItem.getName() == null){
+                subItemViewHolder.name.setText("등록되지 않은 번호");
+                subItemViewHolder.name.setTextColor(Color.parseColor("#9C9C9C"));
+            }
+
+            subItemViewHolder.number.setText(phoneSubItem.getNumber());
+            subItemViewHolder.date.setText(phoneSubItem.getDate());
+            if(phoneSubItem.getType() != null){
+                if(phoneSubItem.getType().equals("OUTGOING")){
+                    subItemViewHolder.callType.setImageResource(R.drawable.outcoming_call);
+                    subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+                }
+                else if(phoneSubItem.getType().equals("INCOMING")){
+                    subItemViewHolder.callType.setImageResource(R.drawable.incoming_call);
+                    subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+                }
+
+                else if(phoneSubItem.getType().equals("MISSED")){
+                    subItemViewHolder.callType.setImageResource(R.drawable.cancel_call);
+                    subItemViewHolder.date.setTextColor(Color.RED);
+                }
+            }
+
+            //subItemViewHolder.callType.setText(phoneSubItem.getType());
+        }
+        if(getItemViewType(i) == TYPE_LOG){
+
+        }
+        else{
+            TimeViewHolder timeViewHolder =(TimeViewHolder) viewHolder;
+            if (phoneSubItem.getDiff_date() == 0)
+                timeViewHolder.date.setText("오늘");
+            else if (phoneSubItem.getDiff_date() == 1)
+                timeViewHolder.date.setText("어제");
+            else
+                timeViewHolder.date.setText(phoneSubItem.getDate());
         }
 
-        subItemViewHolder.number.setText(phoneSubItem.getNumber());
-        subItemViewHolder.date.setText(phoneSubItem.getDate());
-        if(phoneSubItem.getType() != null){
-            if(phoneSubItem.getType().equals("OUTGOING")){
-                subItemViewHolder.callType.setImageResource(R.drawable.outcoming_call);
-                subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
-            }
-            else if(phoneSubItem.getType().equals("INCOMING")){
-                subItemViewHolder.callType.setImageResource(R.drawable.incoming_call);
-                subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
-            }
-
-            else if(phoneSubItem.getType().equals("MISSED")){
-                subItemViewHolder.callType.setImageResource(R.drawable.cancel_call);
-                subItemViewHolder.date.setTextColor(Color.RED);
-            }
-        }
-
-        //subItemViewHolder.callType.setText(phoneSubItem.getType());
 
     }
 
@@ -112,11 +132,11 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemAdapter.SubItemV
     }
 
     public static class TimeViewHolder extends  RecyclerView.ViewHolder {
-        TextView timeItemView;
+        TextView date;
 
         public TimeViewHolder(View itemView){
             super(itemView);
-            timeItemView = itemView.findViewById(R.id.timeItemView);
+            date = itemView.findViewById(R.id.dateView);
         }
     }
 }

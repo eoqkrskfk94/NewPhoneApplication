@@ -8,16 +8,18 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:gravity="center"
-        android:padding="3dp"
         android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.001"
+        tools:layout_editor_absoluteX="0dp">
 
         <ImageButton
             android:id="@+id/backBtn"
@@ -45,26 +47,82 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginBottom="?attr/actionBarSize"
-        />
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/topBar"
+        app:layout_anchorGravity="bottom|center"
+        tools:ignore="MissingConstraints" />
 
-    <com.ismaeldivita.chipnavigation.ChipNavigationBar
-        android:id="@+id/bottomNav"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="@drawable/nav_box"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:cnb_menuResource="@menu/menu_bottom"/>
+        app:layout_constraintTop_toBottomOf="@+id/topBar"
+        app:layout_constraintVertical_bias="0.0"
+        app:tabSelectedTextColor="@color/colorAccent"
+        app:tabTextColor="@color/colorPrimary"
+        tools:layout_editor_absoluteX="0dp">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/recentLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최근기록" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/messageLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="메세지" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/searchLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="검색" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="110dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tablayout"
+        tools:layout_editor_absoluteX="34dp">
+
+
+    </androidx.viewpager.widget.ViewPager>
+
+
+    <!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tablayout"-->
+<!--        app:layout_constraintVertical_bias="0.0"-->
+<!--        tools:layout_editor_absoluteX="0dp"-->
+<!--        android:layout_marginTop="110dp">-->
+
+
+<!--    </FrameLayout>-->
+
+    <!--    <com.ismaeldivita.chipnavigation.ChipNavigationBar-->
+<!--        android:id="@+id/bottomNav"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="55dp"-->
+<!--        android:background="@drawable/nav_box"-->
+<!--        android:layout_marginStart="0dp"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:padding="3dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:cnb_menuResource="@menu/menu_bottom"/>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
