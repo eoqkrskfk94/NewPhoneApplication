@@ -9,6 +9,13 @@
     tools:context=".MainActivity">
 
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        tools:visibility="visible" />
+
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -43,17 +50,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/menu_button" />
+            app:srcCompat="@drawable/menu_button"
+            tools:ignore="MissingConstraints" />
 
     </LinearLayout>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@+id/topBar"
-        app:layout_anchorGravity="bottom|center"
-        tools:ignore="MissingConstraints" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tablayout"

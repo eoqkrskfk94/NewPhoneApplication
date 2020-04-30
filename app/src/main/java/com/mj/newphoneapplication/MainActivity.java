@@ -106,35 +106,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ins = this;
 
-        TabLayout tabLayout = findViewById(R.id.tablayout);
-        TabItem recentLog = findViewById(R.id.recentLog);
-        TabItem messageLog = findViewById(R.id.messageLog);
-        TabItem searchLog = findViewById(R.id.searchLog);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+//        TabLayout tabLayout = findViewById(R.id.tablayout);
+//        TabItem recentLog = findViewById(R.id.recentLog);
+//        TabItem messageLog = findViewById(R.id.messageLog);
+//        TabItem searchLog = findViewById(R.id.searchLog);
+//        ViewPager viewPager = findViewById(R.id.viewpager);
+//
+//
+//        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
+//        pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
+//        pageAdapter.AddFragment(new MessageFragment(),"메세지");
+//        pageAdapter.AddFragment(new SearchFragment(),"검색");
+//        viewPager.setAdapter(pageAdapter);
+//        tabLayout.setupWithViewPager(viewPager);
 
-
-        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(pageAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-//                if (tab.getPosition() == 1) {
-//                    toolbar.setBackgroundColor(ContextCompat.getColor(MainActivity.this,
-//                            R.color.colorAccent));
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
         //chipNavigationBar = findViewById(R.id.bottomNav);
         menuButton = findViewById(R.id.menuBtn);
