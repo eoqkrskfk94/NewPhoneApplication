@@ -246,8 +246,8 @@ public class MainActivity extends AppCompatActivity {
         //최근기록 가져오기
 
 
-        if (callLog == null)
-            callLog = getCallDetails();
+
+        callLog = getCallDetails();
 
 
         //앱 권한 받기 기능
@@ -439,12 +439,12 @@ public class MainActivity extends AppCompatActivity {
         int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
 
         int idx = 0;
-        Boolean flag = true;
         long day = 0;
         while(cursor.moveToNext() && idx < 90){
             idx++;
             PhoneSubItem phoneSubItem = new PhoneSubItem();
             phoneSubItem.setName(cursor.getString(name));
+            System.out.println(cursor.getString(name));
             phoneSubItem.setNumber(cursor.getString(number));
             phoneSubItem.setDiff_date(-1);
             String callDate = cursor.getString(date);
