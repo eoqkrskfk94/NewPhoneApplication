@@ -24,7 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 
@@ -50,6 +52,9 @@ public class MyService extends Service {
         number = (String) intent.getExtras().get("incomingNumber");
         name = (String) intent.getExtras().get("incomingName");
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        Date now = new Date();
+        String sample = formatter.format(now);
 
 
 
@@ -74,7 +79,10 @@ public class MyService extends Service {
         mView = inflate.inflate(R.layout.view_in_service, null);
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
+        final TextView dateView = (TextView) mView.findViewById(R.id.dateView);
+        dateView.setText(formatter.format(now));
         nameView = (TextView) mView.findViewById(R.id.nameView);
+
         textView.setText(number);
         if(name != null) nameView.setText(name);
 

@@ -80,7 +80,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
 
                                                     if(document.getId().equals(number)){
-                                                        System.out.println("works");
                                                         incomingName = document.getData().get("이름").toString();
                                                         MyService.setName(incomingName);
                                                     }
@@ -125,20 +124,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
-                Toast.makeText(context, "In Contact List " + incomingName, Toast.LENGTH_SHORT).show();
-
-
                 checked = 0;
 
                 context.stopService(new Intent(context, MyService.class));
 
-                System.out.println(number + lastState);
                 if(number != null){
                     counter = 0;
                     if(lastState.equals("RINGING")){
 
                         if(Settings.canDrawOverlays(context)){
-                            System.out.println("why not come out");
                             Intent serviceIntent = new Intent(context, CallService.class);
                             serviceIntent.putExtra("incomingNumber",incomingNumber);
                             serviceIntent.putExtra("incomingName",incomingName);

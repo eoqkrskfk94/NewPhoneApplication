@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MenuActivity"/>
+        <activity android:name=".PhoneDetailActivity"></activity>
+        <activity android:name=".MenuActivity" />
         <activity
             android:name=".CallActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -28,8 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:name=".MainActivity" />
 
         <receiver android:name=".IncomingCallReceiver">
             <intent-filter>

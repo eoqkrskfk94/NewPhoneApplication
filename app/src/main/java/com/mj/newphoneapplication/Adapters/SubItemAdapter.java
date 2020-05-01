@@ -1,6 +1,8 @@
 package com.mj.newphoneapplication.Adapters;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,9 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mj.newphoneapplication.Items.PhoneSubItem;
+import com.mj.newphoneapplication.MainActivity;
+import com.mj.newphoneapplication.MenuActivity;
+import com.mj.newphoneapplication.PhoneDetailActivity;
 import com.mj.newphoneapplication.R;
 
 import java.text.ParseException;
@@ -21,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -62,10 +69,11 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        PhoneSubItem phoneSubItem = phoneSubItems.get(i);
+        final PhoneSubItem phoneSubItem = phoneSubItems.get(i);
         if(viewHolder instanceof SubItemViewHolder){
             SubItemViewHolder subItemViewHolder =(SubItemViewHolder)viewHolder;
             subItemViewHolder.name.setText(phoneSubItem.getName());
+            subItemViewHolder.name.setTextColor(Color.parseColor("#000000"));
             if(phoneSubItem.getName() == null){
                 subItemViewHolder.name.setText("등록되지 않은 번호");
                 subItemViewHolder.name.setTextColor(Color.parseColor("#9C9C9C"));
@@ -82,18 +90,32 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     subItemViewHolder.callType.setImageResource(R.drawable.incoming_call);
                     subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
                 }
-
                 else if(phoneSubItem.getType().equals("MISSED")){
                     subItemViewHolder.callType.setImageResource(R.drawable.cancel_call);
                     subItemViewHolder.date.setTextColor(Color.RED);
                 }
+                else if(phoneSubItem.getType().equals("REJECTED")){
+                    subItemViewHolder.callType.setImageResource(R.drawable.rejected);
+                    subItemViewHolder.date.setTextColor(Color.parseColor("#9C9C9C"));
+                }
             }
+
+            subItemViewHolder.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), PhoneDetailActivity.class);
+                    intent.putExtra("name", phoneSubItem.getName());
+                    intent.putExtra("number", phoneSubItem.getNumber());
+                    view.getContext().startActivity(intent);
+
+                }
+            });
+
+
 
             //subItemViewHolder.callType.setText(phoneSubItem.getType());
         }
-        if(getItemViewType(i) == TYPE_LOG){
 
-        }
         else{
             TimeViewHolder timeViewHolder =(TimeViewHolder) viewHolder;
             if (phoneSubItem.getDiff_date() == 0)
@@ -113,6 +135,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public static class SubItemViewHolder extends RecyclerView.ViewHolder{
+        LinearLayout layout;
         TextView name;
         TextView number;
         TextView date;
@@ -121,10 +144,12 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         SubItemViewHolder(View itemView) {
             super(itemView);
+            layout = itemView.findViewById(R.id.layout);
             name = itemView.findViewById(R.id.nameView);
             number = itemView.findViewById(R.id.numberView);
             date = itemView.findViewById(R.id.dateView);
             callType = itemView.findViewById(R.id.callTypeView);
+
         }
 
 
