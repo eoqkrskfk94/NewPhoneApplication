@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         TabItem searchLog = findViewById(R.id.searchLog);
         ViewPager viewPager = findViewById(R.id.viewpager);
 
-
+        int i;
         PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
         pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
         pageAdapter.AddFragment(new MessageFragment(),"메세지");
