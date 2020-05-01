@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
         return overlay;
     }
 
-    private ArrayList<PhoneSubItem> getCallDetails() {
+    public ArrayList<PhoneSubItem> getCallDetails() {
 
 
         callLog = new ArrayList<PhoneSubItem>();
@@ -440,6 +440,7 @@ public class MainActivity extends AppCompatActivity {
 
         int idx = 0;
         long day = 0;
+        Boolean flag = true;
         while(cursor.moveToNext() && idx < 90){
             idx++;
             PhoneSubItem phoneSubItem = new PhoneSubItem();
@@ -459,8 +460,9 @@ public class MainActivity extends AppCompatActivity {
                 long diffInMillies = Math.abs(date1.getTime() - date2.getTime());
                 long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
-                if(day == 0){
+                if(day == 0 && flag){
                     day = diff;
+                    flag = false;
                     PhoneSubItem phoneSubItem2 = new PhoneSubItem("","","",formatter2.format(callDayTime),0,day);
                     callLog.add(phoneSubItem2);
 
@@ -489,6 +491,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case CallLog.Calls.MISSED_TYPE:
                     phoneSubItem.setType("MISSED");
+                    break;
+                case CallLog.Calls.REJECTED_TYPE:
+                    phoneSubItem.setType("REJECTED");
                     break;
             }
             callLog.add(phoneSubItem);
