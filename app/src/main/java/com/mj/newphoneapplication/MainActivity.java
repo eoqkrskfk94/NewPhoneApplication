@@ -106,19 +106,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ins = this;
 
-//        TabLayout tabLayout = findViewById(R.id.tablayout);
-//        TabItem recentLog = findViewById(R.id.recentLog);
-//        TabItem messageLog = findViewById(R.id.messageLog);
-//        TabItem searchLog = findViewById(R.id.searchLog);
-//        ViewPager viewPager = findViewById(R.id.viewpager);
-//
-//
-//        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
-//        pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
-//        pageAdapter.AddFragment(new MessageFragment(),"메세지");
-//        pageAdapter.AddFragment(new SearchFragment(),"검색");
-//        viewPager.setAdapter(pageAdapter);
-//        tabLayout.setupWithViewPager(viewPager);
+        TabLayout tabLayout = findViewById(R.id.tablayout);
+        TabItem recentLog = findViewById(R.id.recentLog);
+        TabItem messageLog = findViewById(R.id.messageLog);
+        TabItem searchLog = findViewById(R.id.searchLog);
+        ViewPager viewPager = findViewById(R.id.viewpager);
+
+
+        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
+        pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
+        pageAdapter.AddFragment(new MessageFragment(),"메세지");
+        pageAdapter.AddFragment(new SearchFragment(),"검색");
+        viewPager.setAdapter(pageAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
 
         //chipNavigationBar = findViewById(R.id.bottomNav);
