@@ -16,6 +16,7 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -77,11 +78,11 @@ public class CallService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
+        int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
 
         params = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                width,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -101,7 +102,7 @@ public class CallService extends Service {
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         nameView = (TextView) mView.findViewById(R.id.nameView);
 
-        textView.setText(number);
+        textView.setText(phone(number));
         if (name != null) nameView.setText(name);
 
 
@@ -299,6 +300,18 @@ public class CallService extends Service {
             textView.setText("통화종료");
             gif.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public static String phone(String src) {
+        if (src == null) {
+            return "";
+        }
+        if (src.length() == 8) {
+            return src.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        } else if (src.length() == 12) {
+            return src.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+        }
+        return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
     }
 
 

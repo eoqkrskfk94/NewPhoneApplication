@@ -127,18 +127,20 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 checked = 0;
 
                 context.stopService(new Intent(context, MyService.class));
+                if (intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER) != null) {
+                    //incoming call
 
-                if(number != null){
-                    counter = 0;
-                    if(lastState.equals("RINGING")){
+                    if(number != null){
+                        counter = 0;
+                        if(lastState.equals("RINGING")){
 
-                        if(Settings.canDrawOverlays(context)){
-                            Intent serviceIntent = new Intent(context, CallService.class);
-                            serviceIntent.putExtra("incomingNumber",incomingNumber);
-                            serviceIntent.putExtra("incomingName",incomingName);
-                            serviceIntent.putExtra("unknownCall", unknownCall);
-                            context.startService(serviceIntent);
-                        }
+                            if(Settings.canDrawOverlays(context)){
+                                Intent serviceIntent = new Intent(context, CallService.class);
+                                serviceIntent.putExtra("incomingNumber",incomingNumber);
+                                serviceIntent.putExtra("incomingName",incomingName);
+                                serviceIntent.putExtra("unknownCall", unknownCall);
+                                context.startService(serviceIntent);
+                            }
 
 //                        Intent goIntent = new Intent(context, CallActivity.class);
 //                        goIntent.putExtra("incomingNumber",incomingNumber);
@@ -147,9 +149,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 //                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        context.startActivity(goIntent);
 
-                    }
+                        }
 
+                    }
                 }
+
 
             }
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){

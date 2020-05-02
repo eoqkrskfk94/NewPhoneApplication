@@ -28,9 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class PhoneFragment extends Fragment {
 
     private RecyclerView phoneCallLogRecyclerView;
@@ -43,9 +41,6 @@ public class PhoneFragment extends Fragment {
         // Required empty public constructor
     }
 
-    SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy/MM/dd");
-    SimpleDateFormat formatter3 = new SimpleDateFormat("HH:mm");
-    Date now = new Date();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +71,18 @@ public class PhoneFragment extends Fragment {
 
         return rootView;
 
+    }
+
+    public static String phone(String src) {
+        if (src == null) {
+            return "";
+        }
+        if (src.length() == 8) {
+            return src.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        } else if (src.length() == 12) {
+            return src.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+        }
+        return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
     }
 
 }

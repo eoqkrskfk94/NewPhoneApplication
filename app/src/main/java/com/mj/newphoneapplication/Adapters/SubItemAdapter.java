@@ -1,10 +1,8 @@
 package com.mj.newphoneapplication.Adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mj.newphoneapplication.Items.PhoneSubItem;
-import com.mj.newphoneapplication.MainActivity;
-import com.mj.newphoneapplication.MenuActivity;
 import com.mj.newphoneapplication.PhoneDetailActivity;
 import com.mj.newphoneapplication.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -79,7 +69,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 subItemViewHolder.name.setTextColor(Color.parseColor("#9C9C9C"));
             }
 
-            subItemViewHolder.number.setText(phoneSubItem.getNumber());
+            subItemViewHolder.number.setText(phone(phoneSubItem.getNumber()));
             subItemViewHolder.date.setText(phoneSubItem.getDate());
             if(phoneSubItem.getType() != null){
                 if(phoneSubItem.getType().equals("OUTGOING")){
@@ -111,9 +101,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-
-
-            //subItemViewHolder.callType.setText(phoneSubItem.getType());
         }
 
         else{
@@ -163,5 +150,17 @@ public class SubItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             date = itemView.findViewById(R.id.dateView);
         }
+    }
+
+    public static String phone(String src) {
+        if (src == null) {
+            return "";
+        }
+        if (src.length() == 8) {
+            return src.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        } else if (src.length() == 12) {
+            return src.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+        }
+        return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
     }
 }

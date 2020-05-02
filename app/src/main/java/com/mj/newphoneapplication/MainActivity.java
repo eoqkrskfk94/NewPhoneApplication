@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.provider.Telephony;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,7 @@ import com.mj.newphoneapplication.Fragments.MessageFragment;
 import com.mj.newphoneapplication.Fragments.PhoneFragment;
 import com.mj.newphoneapplication.Fragments.SearchFragment;
 import com.mj.newphoneapplication.Fragments.SettingPreferenceFragment;
+import com.mj.newphoneapplication.Items.MessageItem;
 import com.mj.newphoneapplication.Items.PhoneParentItem;
 import com.mj.newphoneapplication.Items.PhoneSubItem;
 
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ContactInfo> contactArray;
     private ArrayList<DatabaseInfo> datbaseArray;
     private ArrayList<PhoneSubItem> callLog;
+    private ArrayList<MessageItem> smsLog;
     private ArrayList<PhoneParentItem> parentCallLog;
     private ArrayList<UrlInfo> urlArray;
     private int current_fragment;
@@ -245,15 +248,9 @@ public class MainActivity extends AppCompatActivity {
 
         //최근기록 가져오기
 
-
-
-        callLog = getCallDetails();
-
-
         //앱 권한 받기 기능
         checkPermission();
         checkPermissionOverlay();
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
@@ -267,6 +264,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+
+        int REQUEST_PHONE_CALL = 1;
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, REQUEST_PHONE_CALL);
+        }
+
+        callLog = getCallDetails();
+        smsLog = getSMSDetails();
 
 
     }
@@ -445,7 +450,6 @@ public class MainActivity extends AppCompatActivity {
             idx++;
             PhoneSubItem phoneSubItem = new PhoneSubItem();
             phoneSubItem.setName(cursor.getString(name));
-            System.out.println(cursor.getString(name));
             phoneSubItem.setNumber(cursor.getString(number));
             phoneSubItem.setDiff_date(-1);
             String callDate = cursor.getString(date);
@@ -502,6 +506,67 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
 
         return callLog;
+    }
+
+    public ArrayList<MessageItem> getSMSDetails(){
+
+        smsLog = new ArrayList<MessageItem>();
+
+        Uri message = Uri.parse("content://sms/");
+        Cursor cursor = getContentResolver().query(message, null, null, null, null);
+        int totalSMS = cursor.getCount();
+
+        long day = 0;
+        Boolean flag = true;
+        if (cursor.moveToFirst()) {
+            for (int i = 0; i < totalSMS; i++) {
+                if (cursor.getString(cursor.getColumnIndexOrThrow("type")).contains("1")){
+                    MessageItem messageItem = new MessageItem();
+                    messageItem.setAddress(cursor.getString(cursor
+                            .getColumnIndexOrThrow("address")));
+                    messageItem.setMsg(cursor.getString(cursor.getColumnIndexOrThrow("body")));
+                    messageItem.setDiff_date(-1);
+
+                    Date callDayTime = new Date(cursor.getColumnIndexOrThrow("date"));
+                    System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(callDayTime));
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                    String sample = formatter2.format(now);
+
+                    try{
+                        Date date1=new SimpleDateFormat("yyyy/MM/dd").parse(sample);
+                        Date date2=new SimpleDateFormat("yyyy/MM/dd").parse(formatter.format(callDayTime));
+                        long diffInMillies = Math.abs(date1.getTime() - date2.getTime());
+                        long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                        if(day == 0 && flag){
+                            day = diff;
+                            flag = false;
+                            MessageItem messageItem2 = new MessageItem("","",formatter2.format(callDayTime),day);
+                            smsLog.add(messageItem2);
+
+                        }
+                        else if(day != diff){
+                            day = diff;
+                            MessageItem messageItem2 = new MessageItem("","",formatter2.format(callDayTime),day);
+                            smsLog.add(messageItem2);
+                        }
+
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    messageItem.setTime(formatter3.format(callDayTime));
+                    smsLog.add(messageItem);
+
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        return smsLog;
+
     }
 
 

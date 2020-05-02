@@ -36,8 +36,8 @@ public class PhoneDetailActivity extends AppCompatActivity {
         nameView = findViewById(R.id.nameView);
         numberView = findViewById(R.id.numberView);
 
-
-        nameView.setText(name);
+        if(name == null) nameView.setText("등록되지 않은 번호");
+        else nameView.setText(name);
         numberView.setText(number);
 
 

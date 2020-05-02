@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -62,9 +63,11 @@ public class MyService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
+        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
+
 
         params = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                width,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
@@ -83,7 +86,7 @@ public class MyService extends Service {
         dateView.setText(formatter.format(now));
         nameView = (TextView) mView.findViewById(R.id.nameView);
 
-        textView.setText(number);
+        textView.setText(phone(number));
         if(name != null) nameView.setText(name);
 
 //        db.collection("entities")
@@ -202,6 +205,18 @@ public class MyService extends Service {
     public static void setName(String name) {
         nameView.setText(name);
         MyService.name = name;
+    }
+
+    public static String phone(String src) {
+        if (src == null) {
+            return "";
+        }
+        if (src.length() == 8) {
+            return src.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+        } else if (src.length() == 12) {
+            return src.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+        }
+        return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
     }
 
 
