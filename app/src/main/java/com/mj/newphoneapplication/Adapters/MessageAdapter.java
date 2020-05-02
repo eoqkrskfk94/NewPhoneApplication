@@ -57,9 +57,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final MessageItem messageItem = messageItems.get(i);
         if(viewHolder instanceof MessageItemViewHolder){
             MessageItemViewHolder messageItemViewHolder = (MessageItemViewHolder)viewHolder;
-            messageItemViewHolder.number.setText(phone(messageItem.getAddress()));
+            if(messageItem.getAddress().equals("#CMAS#Severe"))  messageItemViewHolder.number.setText("안전 안내 문자");
+            else messageItemViewHolder.number.setText(phone(messageItem.getAddress()));
             messageItemViewHolder.date.setText(messageItem.getTime());
-            messageItemViewHolder.message.setText(messageItem.getMsg());
+            messageItemViewHolder.message.setText(messageItem.getMsg().replaceAll("\\n"," "));
         }
         else{
             TimeViewHolder timeViewHolder = (TimeViewHolder) viewHolder;

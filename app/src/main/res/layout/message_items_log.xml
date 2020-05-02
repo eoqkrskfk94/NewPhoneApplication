@@ -95,6 +95,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="8dp"
         android:text="메시지 내용입니다."
+        android:ellipsize="end"
         android:maxLines="1"/>
 
 </LinearLayout>
