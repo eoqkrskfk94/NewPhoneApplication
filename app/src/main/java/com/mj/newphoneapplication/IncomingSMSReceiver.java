@@ -32,7 +32,6 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                     smsSender = smsMessage.getDisplayOriginatingAddress();
                     smsBody += smsMessage.getMessageBody();
 
-                    Toast.makeText(context, smsSender  + smsBody, Toast.LENGTH_SHORT).show();
                     ArrayList urls = pullLinks(smsBody);
 
                     if(Settings.canDrawOverlays(context)){

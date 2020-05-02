@@ -63,11 +63,11 @@ public class MyService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
+
 
 
         params = new WindowManager.LayoutParams(
-                width,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,

@@ -78,10 +78,8 @@ public class CallService extends Service {
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-        int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
-
         params = new WindowManager.LayoutParams(
-                width,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -218,15 +216,23 @@ public class CallService extends Service {
 
         int call_length[] = {0, 0};
         if (level.equals("")) {
+            //call_length[0] = 540;
+            //call_length[1] = 900;
             call_length[0] = 30;
             call_length[1] = 60;
         }else if (level.equals("약")) {
+            //call_length[0] = 180;
+            //call_length[1] = 300;
             call_length[0] = 30;
             call_length[1] = 60;
         } else if (level.equals("중")) {
+            //call_length[0] = 540;
+            //call_length[1] = 900;
             call_length[0] = 20;
             call_length[1] = 30;
         } else if (level.equals("강")) {
+            //call_length[0] = 60;
+            //call_length[1] = 180;
             call_length[0] = 10;
             call_length[1] = 15;
 

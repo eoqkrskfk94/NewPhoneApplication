@@ -127,7 +127,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 checked = 0;
 
                 context.stopService(new Intent(context, MyService.class));
-                if (intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER) != null) {
+                if ((intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL))){
+
+                }
+                else{
                     //incoming call
 
                     if(number != null){
@@ -142,12 +145,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                                 context.startService(serviceIntent);
                             }
 
-//                        Intent goIntent = new Intent(context, CallActivity.class);
-//                        goIntent.putExtra("incomingNumber",incomingNumber);
-//                        goIntent.putExtra("incomingName",incomingName);
-//                        goIntent.putExtra("unknownCall",unknownCall);
-//                        goIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        context.startActivity(goIntent);
 
                         }
 
@@ -159,18 +156,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
 
                 //tt.cancel();
+                lastState = state;
                 incomingName = null;
                 CallService.stopTimer();
                 context.stopService(new Intent(context, CallService.class));
-
-//                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
-//                CallActivity.getInstace().updateTheBacground(-1);
-
                 call = 0;
-//                CallActivity.getInstace().updateTheTimeView(0,unknownCall);
-//                CallActivity.getInstace().updateTheBacground(-1);
-//                CallActivity.getInstace().stopTimer();
-//                CallActivity.getInstace().endCall();
+
             }
 
 
@@ -208,6 +199,14 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 cur.close();
         }
         return false;
+    }
+
+    public String getLastState() {
+        return lastState;
+    }
+
+    public void setLastState(String lastState) {
+        this.lastState = lastState;
     }
 
 

@@ -53,11 +53,10 @@ public class MyServiceSMS extends Service {
         message = (String) intent.getExtras().get("incomingBody");
         urls = (ArrayList) intent.getExtras().get("incomingUrls");
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
-        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics());
+
         params = new WindowManager.LayoutParams(
-                width,
-                height,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -90,7 +89,6 @@ public class MyServiceSMS extends Service {
                                 for (int i = 0; i < urls.size(); i++) {
 
                                     if (urls.get(i).toString().contains(document.getId())){
-                                        System.out.println(urls.get(i).toString());
                                         checkUrlView.setText("In database");
                                         url[0] += document.getId();
                                         url[0] += " ";
