@@ -51,7 +51,7 @@ public class PhoneFragment extends Fragment {
         phoneCallLogRecyclerView = rootView.findViewById(R.id.headerRecyclerView);
         phoneCallLogRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        phoneSubItems = MainActivity.getInstace().getCallLog();
+        if(phoneSubItems == null) phoneSubItems = MainActivity.getInstace().getCallLog();
 
 
         itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);

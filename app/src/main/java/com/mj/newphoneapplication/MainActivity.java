@@ -139,51 +139,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-//        fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frameLayout, phoneFragment).commitAllowingStateLoss();
-//        current_fragment = 1;
-//
-//        chipNavigationBar.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(int id) {
-//                Fragment fragment = null;
-//                switch (id) {
-//                    case R.id.phone:
-//                        fragment = new PhoneFragment();
-//                        next_fragment = 1;
-//                        break;
-//                    case R.id.message:
-//                        fragment = new MessageFragment();
-//                        next_fragment = 2;
-//                        break;
-//                    case R.id.search:
-//                        fragment = new SearchFragment();
-//                        next_fragment = 3;
-//                        break;
-//                }
-//
-//                if (fragment != null) {
-//
-//                    if (current_fragment < next_fragment) {
-//                        current_fragment = next_fragment;
-//                        fragmentManager = getSupportFragmentManager();
-//                        fragmentManager.beginTransaction()
-//                                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-//                                .replace(R.id.frameLayout, fragment)
-//                                .commit();
-//                    } else if (current_fragment > next_fragment) {
-//                        current_fragment = next_fragment;
-//                        fragmentManager = getSupportFragmentManager();
-//                        fragmentManager.beginTransaction()
-//                                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left)
-//                                .replace(R.id.frameLayout, fragment)
-//                                .commit();
-//                    }
-//
-//                }
-//            }
-//        });
-
         //데이터베이스 번호 목록 불러오기
 
 //        if (datbaseArray == null) {
@@ -443,11 +398,9 @@ public class MainActivity extends AppCompatActivity {
         int date = cursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
 
-        int idx = 0;
         long day = 0;
         Boolean flag = true;
-        while(cursor.moveToNext() && idx < 90){
-            idx++;
+        while(cursor.moveToNext()){
             PhoneSubItem phoneSubItem = new PhoneSubItem();
             phoneSubItem.setName(cursor.getString(name));
             phoneSubItem.setNumber(cursor.getString(number));
