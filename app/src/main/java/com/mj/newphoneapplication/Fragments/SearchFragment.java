@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +40,7 @@ public class SearchFragment extends Fragment {
 
     EditText searchText;
     ImageView noResultView;
+    ProgressBar loadingBar;
     private RecyclerView searchRecyclerView;
     private SearchAdapter itemAdapter;
     static String contactName;
@@ -57,14 +59,17 @@ public class SearchFragment extends Fragment {
         searchRecyclerView = rootView.findViewById(R.id.searchView);
         searchText = rootView.findViewById(R.id.searchText);
         noResultView = rootView.findViewById(R.id.noresultView);
+        loadingBar = rootView.findViewById(R.id.progressBar);
+        loadingBar.setVisibility(View.GONE);
         noResultView.setVisibility(View.GONE);
 
 
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+                noResultView.setVisibility(View.GONE);
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    loadingBar.setVisibility(View.VISIBLE);
                     searchItems = new ArrayList<SearchItem>();
 
                     contactExists(getActivity(),searchText.getText().toString());
@@ -73,30 +78,23 @@ public class SearchFragment extends Fragment {
                         @Override
                         public void onCallback(ArrayList<SearchItem> searchItems) {
 
+                            loadingBar.setVisibility(View.GONE);
                             searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                             itemAdapter = new SearchAdapter(getActivity(), searchItems);
                             searchRecyclerView.setAdapter(itemAdapter);
                             if(searchItems.size() == 0) noResultView.setVisibility(View.VISIBLE);
+
+
                         }
                     });
+                    searchText.onEditorAction(EditorInfo.IME_ACTION_DONE);
                     return true;
                 }
                 return false;
             }
         });
-        return rootView;
-    }
 
-    public static String phone(String src) {
-        if (src == null) {
-            return "";
-        }
-        if (src.length() == 8) {
-            return src.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
-        } else if (src.length() == 12) {
-            return src.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
-        }
-        return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+        return rootView;
     }
 
     public void contactExists(Context context, String number) {
