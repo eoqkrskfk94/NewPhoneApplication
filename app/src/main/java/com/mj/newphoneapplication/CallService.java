@@ -48,6 +48,7 @@ public class CallService extends Service {
     View mView;
     static TimerTask tt;
     public int counter = 0;
+    private static CallService ins;
 
     SharedPreferences prefs;
 
@@ -61,6 +62,7 @@ public class CallService extends Service {
     private static TextView nameView;
     private static TextView call_time;
 
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -72,7 +74,9 @@ public class CallService extends Service {
 
         number = (String) intent.getExtras().get("incomingNumber");
         name = (String) intent.getExtras().get("incomingName");
-        unknownCall = (int) intent.getExtras().get("unknownCall");
+        //unknownCall = (int) intent.getExtras().get("unknownCall");
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        ins = this;
 
 
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -93,9 +97,9 @@ public class CallService extends Service {
         mView.setOnTouchListener(mViewTouchListener);
         call_time = (TextView) mView.findViewById(R.id.timeView);
 
-        tt = timerTaskMaker();
-        final Timer timer = new Timer();
-        timer.schedule(tt, 0, 1000);
+//        tt = timerTaskMaker();
+//        final Timer timer = new Timer();
+//        timer.schedule(tt, 0, 1000);
 
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         nameView = (TextView) mView.findViewById(R.id.nameView);
@@ -161,6 +165,10 @@ public class CallService extends Service {
         }
     };
 
+    public static CallService getInstace() {
+        return ins;
+    }
+
 
     private void setMaxPosition() {
         DisplayMetrics matrix = new DisplayMetrics();
@@ -182,12 +190,18 @@ public class CallService extends Service {
         CallService.name = name;
     }
 
+
     final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            updateTheTimeView(counter, unknownCall);
+            if(mView != null) updateTheTimeView(counter, unknownCall);
         }
     };
-
+    public void updateTime(int counter, int unknownCall){
+        this.counter = counter;
+        this.unknownCall = unknownCall;
+        Message msg = handler.obtainMessage();
+        handler.sendMessage(msg);
+    }
 
     public TimerTask timerTaskMaker() {
         TimerTask tempTask = new TimerTask() {
@@ -196,7 +210,7 @@ public class CallService extends Service {
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
 
-                counter++;
+                //counter++;
             }
         };
         return tempTask;
@@ -207,34 +221,37 @@ public class CallService extends Service {
     }
 
     public void updateTheTimeView(final int sec, final int unknownCall) {
-        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        String level = prefs.getString("level_list", "");
-        Boolean vibrate = prefs.getBoolean("vibration_alarm", false);
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        String level = prefs.getString("level_list", "강");
+        Boolean vibrate = prefs.getBoolean("vibration_alarm", true);
         Boolean voice = prefs.getBoolean("voice_alarm", false);
 
-        int call_length[] = {0, 0};
+        int call_length[] = {0, 0, 0};
         if (level.equals("")) {
             //call_length[0] = 540;
             //call_length[1] = 900;
             call_length[0] = 30;
             call_length[1] = 60;
+            call_length[2] = 90;
         }else if (level.equals("약")) {
             //call_length[0] = 180;
             //call_length[1] = 300;
             call_length[0] = 30;
             call_length[1] = 60;
+            call_length[2] = 90;
         } else if (level.equals("중")) {
             //call_length[0] = 540;
             //call_length[1] = 900;
             call_length[0] = 20;
             call_length[1] = 30;
+            call_length[2] = 40;
         } else if (level.equals("강")) {
             //call_length[0] = 60;
             //call_length[1] = 180;
             call_length[0] = 10;
             call_length[1] = 15;
+            call_length[2] = 20;
 
         }
 
@@ -248,9 +265,9 @@ public class CallService extends Service {
 
             if (unknownCall == 1) {
                 if (sec == 1) {
-                    updateTheBacground(1);
+                    updateTheBacground(0);
                 } else if (sec == call_length[0]) {
-                    updateTheBacground(2);
+                    updateTheBacground(1);
                     if (vibrate) {
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
                             vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
@@ -258,6 +275,14 @@ public class CallService extends Service {
                             vibrator.vibrate(1000);
                     }
                 } else if (sec == call_length[1]) {
+                    updateTheBacground(2);
+                    if (vibrate) {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
+                            vibrator.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        else
+                            vibrator.vibrate(1000);
+                    }
+                } else if (sec == call_length[2]) {
                     updateTheBacground(3);
                     if (vibrate) {
                         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1)
@@ -286,25 +311,25 @@ public class CallService extends Service {
         } else if (level == 0) {
             layout.setBackgroundResource(R.drawable.call_box1);
             textView.setText("안전");
-            gif.setVisibility(View.INVISIBLE);
+            //gif.setVisibility(View.INVISIBLE);
 
         } else if (level == 1) {
             layout.setBackgroundResource(R.drawable.call_box2);
             textView.setText("양호");
-            gif.setVisibility(View.VISIBLE);
+            //gif.setVisibility(View.VISIBLE);
 
         } else if (level == 2) {
             layout.setBackgroundResource(R.drawable.call_box3);
             textView.setText("주의");
-            gif.setVisibility(View.VISIBLE);
+            //gif.setVisibility(View.VISIBLE);
         } else if (level == 3) {
             layout.setBackgroundResource(R.drawable.call_box4);
             textView.setText("위험");
-            gif.setVisibility(View.VISIBLE);
+            //gif.setVisibility(View.VISIBLE);
         } else if (level == 4) {
             layout.setBackgroundResource(R.drawable.call_box5);
             textView.setText("통화종료");
-            gif.setVisibility(View.INVISIBLE);
+            //gif.setVisibility(View.INVISIBLE);
         }
     }
 

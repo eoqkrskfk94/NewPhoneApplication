@@ -143,7 +143,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                                 serviceIntent.putExtra("incomingName",incomingName);
                                 serviceIntent.putExtra("unknownCall", unknownCall);
                                 context.startService(serviceIntent);
+
                             }
+
+                            tt = timerTaskMaker();
+                            final Timer timer = new Timer();
+                            timer.schedule(tt, 0, 1000);
 
 
                         }
@@ -152,13 +157,14 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 }
 
 
+
             }
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
 
-                //tt.cancel();
+                tt.cancel();
                 lastState = state;
                 incomingName = null;
-                CallService.stopTimer();
+                //CallService.stopTimer();
                 context.stopService(new Intent(context, CallService.class));
                 call = 0;
 
@@ -176,6 +182,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 counter++;
+                System.out.println(counter);
+                if(CallService.getInstace() != null) CallService.getInstace().updateTime(counter,unknownCall);
+
             }
         };
         return  tempTask;
