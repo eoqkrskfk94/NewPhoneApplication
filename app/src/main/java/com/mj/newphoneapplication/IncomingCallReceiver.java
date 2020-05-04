@@ -43,6 +43,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         //ITelephony telephonyService;
+        System.out.println("gogogogogogo");
 
         try{
 
