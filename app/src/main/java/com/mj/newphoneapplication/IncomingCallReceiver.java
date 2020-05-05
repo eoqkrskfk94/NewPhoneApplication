@@ -1,10 +1,12 @@
 package com.mj.newphoneapplication;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -23,6 +25,8 @@ import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 
+import static android.content.Context.POWER_SERVICE;
+
 public class IncomingCallReceiver extends BroadcastReceiver {
 
     static TimerTask tt;
@@ -39,11 +43,22 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
     private ArrayList<DatabaseInfo> databaseArray;
 
+    PowerManager powerManager;
+    static PowerManager.WakeLock wakeLock;
+
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onReceive(Context context, Intent intent){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         //ITelephony telephonyService;
-        System.out.println("gogogogogogo");
+
+        powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+
+        if(wakeLock == null){
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "TimerWakeLock");
+
+        }
+
 
         try{
 
@@ -118,14 +133,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         context.startService(serviceIntent);
                     }
 
-
                 }
 
             }
 
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_OFFHOOK)){
 
+
                 checked = 0;
+
 
                 context.stopService(new Intent(context, MyService.class));
                 if ((intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL))){
@@ -138,7 +154,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                         counter = 0;
                         if(lastState.equals("RINGING")){
 
+                            wakeLock.acquire();
+                            //System.out.println("starts wakelock");
+
                             if(Settings.canDrawOverlays(context)){
+
                                 Intent serviceIntent = new Intent(context, CallService.class);
                                 serviceIntent.putExtra("incomingNumber",incomingNumber);
                                 serviceIntent.putExtra("incomingName",incomingName);
@@ -158,9 +178,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 }
 
 
-
             }
             if(state.equalsIgnoreCase(TelephonyManager.EXTRA_STATE_IDLE)){
+
+                if(wakeLock.isHeld()){
+                    //System.out.println("wakeLock released");
+                    wakeLock.release();
+                }
 
                 tt.cancel();
                 lastState = state;
@@ -183,7 +207,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 counter++;
-                System.out.println(counter);
                 if(CallService.getInstace() != null) CallService.getInstace().updateTime(counter,unknownCall);
 
             }
