@@ -16,6 +16,7 @@ import android.provider.CallLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.mj.newphoneapplication.Adapters.ParentItemAdapter;
 import com.mj.newphoneapplication.Adapters.SubItemAdapter;
@@ -37,6 +38,7 @@ public class PhoneFragment extends Fragment {
     private SubItemAdapter itemAdapter;
     ArrayList<PhoneSubItem> phoneSubItems;
     SwipeRefreshLayout swipeRefreshLayout;
+    ImageView swipeDownImage;
 
 
     public PhoneFragment() {
@@ -52,23 +54,32 @@ public class PhoneFragment extends Fragment {
         swipeRefreshLayout = rootView.findViewById(R.id.phoneSwipeRefreshLayout);
         phoneCallLogRecyclerView = rootView.findViewById(R.id.headerRecyclerView);
         phoneCallLogRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        phoneSubItems = new ArrayList<PhoneSubItem>();
+        swipeDownImage = rootView.findViewById(R.id.swipe_down);
 
 
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
-            if(phoneSubItems == null) phoneSubItems = MainActivity.getInstace().getCallLog();
-
-        if(phoneSubItems != null){
-            itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
-            phoneCallLogRecyclerView.setAdapter(itemAdapter);
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED){
+            phoneSubItems = MainActivity.getInstace().getCallLog();
         }
+
+        if(phoneSubItems.size() == 0)
+            swipeDownImage.setVisibility(View.VISIBLE);
+        else
+            swipeDownImage.setVisibility(View.GONE);
+
+        itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
+        phoneCallLogRecyclerView.setAdapter(itemAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                phoneSubItems = MainActivity.getInstace().getCallDetails();
-                itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
-                phoneCallLogRecyclerView.setAdapter(itemAdapter);
-                swipeRefreshLayout.setRefreshing(false);
+                if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED){
+                    phoneSubItems = MainActivity.getInstace().getCallDetails();
+                    swipeDownImage.setVisibility(View.GONE);
+                    itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
+                    phoneCallLogRecyclerView.setAdapter(itemAdapter);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
 
             }
         });

@@ -13,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.mj.newphoneapplication.Adapters.MessageAdapter;
 import com.mj.newphoneapplication.Adapters.SubItemAdapter;
@@ -30,6 +31,7 @@ public class MessageFragment extends Fragment {
     private MessageAdapter itemAdapter;
     ArrayList<MessageItem> messageItems;
     SwipeRefreshLayout swipeRefreshLayout;
+    ImageView swipeDownImage;
 
 
     public MessageFragment() {
@@ -45,24 +47,33 @@ public class MessageFragment extends Fragment {
         swipeRefreshLayout = rootView.findViewById(R.id.phoneSwipeRefreshLayout);
         messageLogRecyclerView = rootView.findViewById(R.id.headerRecyclerView);
         messageLogRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        messageItems = new ArrayList<MessageItem>();
+        swipeDownImage = rootView.findViewById(R.id.swipe_down);
 
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
-            if(messageItems == null) messageItems = MainActivity.getInstace().getSMSDetails();
-
-
-        if(messageItems != null){
-            itemAdapter = new MessageAdapter(getActivity(), messageItems);
-            messageLogRecyclerView.setAdapter(itemAdapter);
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED){
+            messageItems = MainActivity.getInstace().getSMSDetails();
         }
+
+        if(messageItems.size() == 0)
+            swipeDownImage.setVisibility(View.VISIBLE);
+        else
+            swipeDownImage.setVisibility(View.GONE);
+
+
+        itemAdapter = new MessageAdapter(getActivity(), messageItems);
+        messageLogRecyclerView.setAdapter(itemAdapter);
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                messageItems = MainActivity.getInstace().getSMSDetails();
-                itemAdapter = new MessageAdapter(getActivity(), messageItems);
-                messageLogRecyclerView.setAdapter(itemAdapter);
-                swipeRefreshLayout.setRefreshing(false);
+                if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED){
+                    messageItems = MainActivity.getInstace().getSMSDetails();
+                    swipeDownImage.setVisibility(View.GONE);
+                    itemAdapter = new MessageAdapter(getActivity(), messageItems);
+                    messageLogRecyclerView.setAdapter(itemAdapter);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
 
             }
         });

@@ -88,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
     String[] permission_list = {
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECEIVE_SMS,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.READ_CONTACTS,
-            Manifest.permission.RECEIVE_SMS
+            Manifest.permission.READ_SMS
     };
 
     ChipNavigationBar chipNavigationBar;
@@ -224,10 +225,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        int REQUEST_PHONE_CALL = 1;
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, REQUEST_PHONE_CALL);
-        }
 
         if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
             callLog = getCallDetails();
