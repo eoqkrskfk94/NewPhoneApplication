@@ -1,7 +1,10 @@
 package com.mj.newphoneapplication.Fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,10 +46,15 @@ public class MessageFragment extends Fragment {
         messageLogRecyclerView = rootView.findViewById(R.id.headerRecyclerView);
         messageLogRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        messageItems = MainActivity.getInstace().getSMSDetails();
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
+            if(messageItems == null) messageItems = MainActivity.getInstace().getSMSDetails();
 
-        itemAdapter = new MessageAdapter(getActivity(), messageItems);
-        messageLogRecyclerView.setAdapter(itemAdapter);
+
+        if(messageItems != null){
+            itemAdapter = new MessageAdapter(getActivity(), messageItems);
+            messageLogRecyclerView.setAdapter(itemAdapter);
+        }
+
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

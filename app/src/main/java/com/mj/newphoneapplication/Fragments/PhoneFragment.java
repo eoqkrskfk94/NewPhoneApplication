@@ -1,10 +1,12 @@
 package com.mj.newphoneapplication.Fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 
 
-
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,11 +53,14 @@ public class PhoneFragment extends Fragment {
         phoneCallLogRecyclerView = rootView.findViewById(R.id.headerRecyclerView);
         phoneCallLogRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if(phoneSubItems == null) phoneSubItems = MainActivity.getInstace().getCallLog();
 
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
+            if(phoneSubItems == null) phoneSubItems = MainActivity.getInstace().getCallLog();
 
-        itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
-        phoneCallLogRecyclerView.setAdapter(itemAdapter);
+        if(phoneSubItems != null){
+            itemAdapter = new SubItemAdapter(getActivity(), phoneSubItems);
+            phoneCallLogRecyclerView.setAdapter(itemAdapter);
+        }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

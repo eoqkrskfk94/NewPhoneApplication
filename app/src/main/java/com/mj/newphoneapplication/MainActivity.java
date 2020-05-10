@@ -204,9 +204,13 @@ public class MainActivity extends AppCompatActivity {
         //최근기록 가져오기
 
         //앱 권한 받기 기능
+        //여러 앱 권한 받기 (문자, 폰상태, 전화기록, 문자기록)
         checkPermission();
+
+        //앱 위에 그리기 권한
         checkPermissionOverlay();
 
+        //배터리 최적화 예외처리
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             Intent intent = new Intent();
@@ -225,8 +229,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_SMS}, REQUEST_PHONE_CALL);
         }
 
-        callLog = getCallDetails();
-        smsLog = getSMSDetails();
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
+            callLog = getCallDetails();
+
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
+            smsLog = getSMSDetails();
 
 
     }
