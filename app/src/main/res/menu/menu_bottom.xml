@@ -21,13 +21,13 @@
         app:cnb_textColor = "#000000"
         />
 
-    <item
-        android:id="@+id/search"
-        android:icon="@drawable/search"
-        android:title="   검 색   "
-        app:cnb_backgroundColor = "#7ae4ff"
-        app:cnb_iconColor = "#000000"
-        app:cnb_textColor = "#000000"
-        />
+<!--    <item-->
+<!--        android:id="@+id/search"-->
+<!--        android:icon="@drawable/search"-->
+<!--        android:title="   검 색   "-->
+<!--        app:cnb_backgroundColor = "#7ae4ff"-->
+<!--        app:cnb_iconColor = "#000000"-->
+<!--        app:cnb_textColor = "#000000"-->
+<!--        />-->
 
 </menu>

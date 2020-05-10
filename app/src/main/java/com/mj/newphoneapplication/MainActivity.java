@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
         pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
         pageAdapter.AddFragment(new MessageFragment(),"메세지");
-        pageAdapter.AddFragment(new SearchFragment(),"검색");
+        //pageAdapter.AddFragment(new SearchFragment(),"검색");
         viewPager.setAdapter(pageAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
