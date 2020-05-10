@@ -479,8 +479,7 @@ public class MainActivity extends AppCompatActivity {
                             .getColumnIndexOrThrow("address")));
                     messageItem.setMsg(cursor.getString(cursor.getColumnIndexOrThrow("body")));
                     messageItem.setDiff_date(-1);
-
-                    Date callDayTime = new Date(cursor.getColumnIndexOrThrow("date"));
+                    Date callDayTime = new Date(Long.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("date"))));
                     System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(callDayTime));
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
                     String sample = formatter2.format(now);
