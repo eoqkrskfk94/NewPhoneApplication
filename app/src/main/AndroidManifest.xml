@@ -14,9 +14,6 @@
         <activity
             android:name=".CallActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity
-            android:name=".Main2Activity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".SubActivity" />
         <activity
             android:name=".SplashActivity"
