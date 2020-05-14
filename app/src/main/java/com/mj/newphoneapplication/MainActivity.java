@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
 
-        //chipNavigationBar = findViewById(R.id.bottomNav);
         menuButton = findViewById(R.id.menuBtn);
 
         menuButton.setOnClickListener(new View.OnClickListener() {
