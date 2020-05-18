@@ -18,7 +18,7 @@
             android:title="경고음성 위험 알림" />
 
         <ListPreference
-            android:defaultValue="true"
+            android:defaultValue="강"
             android:entries="@array/level"
             android:entryValues="@array/level"
             android:key="level_list"
