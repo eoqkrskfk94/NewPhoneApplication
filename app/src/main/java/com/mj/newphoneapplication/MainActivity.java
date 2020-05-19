@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         menuButton = findViewById(R.id.menuBtn);
-
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         //최근기록 가져오기
+
 
         //앱 권한 받기 기능
         //여러 앱 권한 받기 (문자, 폰상태, 전화기록, 문자기록)
