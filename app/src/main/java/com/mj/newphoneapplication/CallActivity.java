@@ -60,7 +60,6 @@ public class CallActivity extends AppCompatActivity {
         unknownCall = (int) intent.getExtras().get("unknownCall");
         ins = this;
 
-
         tt = timerTaskMaker();
         final Timer timer = new Timer();
         timer.schedule(tt, 0, 1000);
