@@ -90,38 +90,38 @@ public class MyService extends Service {
         textView.setText(phone(number));
         if(name != null) nameView.setText(name);
 
-//        db.collection("entities")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//
-//                                if(document.getId().equals(number)){
-//                                    System.out.println("works");
-//                                    name = document.getData().get("이름").toString();
-//                                    nameView.setText(name);
-//                                    break;
-//                                }
-//
-//                                DatabaseInfo databaseInfo = new DatabaseInfo();
-//                                databaseInfo.setNumber(document.getId());
-//                                databaseInfo.setName(document.getData().get("이름").toString());
-//                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-//
-//                            }
-//
-//                            if(name == null) {
-//                                name = "모르는 번호";
-//                                nameView.setText("모르는 번호");
-//                            }
-//
-//                        } else {
-//                            Log.w("Bad", "Error getting documents.", task.getException());
-//                        }
-//                    }
-//                });
+        db.collection("entities")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                if(document.getId().equals(number)){
+                                    System.out.println("works");
+                                    name = document.getData().get("이름").toString();
+                                    nameView.setText(name);
+                                    break;
+                                }
+
+                                DatabaseInfo databaseInfo = new DatabaseInfo();
+                                databaseInfo.setNumber(document.getId());
+                                databaseInfo.setName(document.getData().get("이름").toString());
+                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+
+                            }
+
+                            if(name == null) {
+                                name = "모르는 번호";
+                                nameView.setText("모르는 번호");
+                            }
+
+                        } else {
+                            Log.w("Bad", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
 
 
 
