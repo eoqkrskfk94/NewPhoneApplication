@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Adapters;
+package com.mj.newphoneapplication.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mj.newphoneapplication.Items.PhoneParentItem;
+import com.mj.newphoneapplication.items.PhoneParentItem;
 import com.mj.newphoneapplication.R;
 
 import java.util.ArrayList;

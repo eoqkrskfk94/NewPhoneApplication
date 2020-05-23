@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Fragments;
+package com.mj.newphoneapplication.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -15,8 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.mj.newphoneapplication.Adapters.MessageAdapter;
-import com.mj.newphoneapplication.Items.MessageItem;
+import com.mj.newphoneapplication.adapters.MessageAdapter;
+import com.mj.newphoneapplication.items.MessageItem;
 import com.mj.newphoneapplication.activities.MainActivity;
 import com.mj.newphoneapplication.R;
 

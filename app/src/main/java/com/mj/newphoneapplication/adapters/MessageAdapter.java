@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Adapters;
+package com.mj.newphoneapplication.adapters;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -8,10 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import com.mj.newphoneapplication.Items.MessageItem;
+import com.mj.newphoneapplication.items.MessageItem;
 import com.mj.newphoneapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 

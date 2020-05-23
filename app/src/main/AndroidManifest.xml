@@ -26,27 +26,27 @@
         <activity
             android:name=".activities.MainActivity" />
 
-        <receiver android:name=".IncomingCallReceiver">
+        <receiver android:name=".receivers.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".IncomingSMSReceiver">
+        <receiver android:name=".receivers.IncomingSMSReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".MyService"
+            android:name=".services.RingingService"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
         <service
-            android:name=".MyServiceSMS"
+            android:name=".services.SmsService"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
         <service
-            android:name=".CallService"
+            android:name=".services.CallService"
             android:enabled="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW" />
     </application>

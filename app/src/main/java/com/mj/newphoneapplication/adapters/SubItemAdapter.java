@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Adapters;
+package com.mj.newphoneapplication.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mj.newphoneapplication.Items.PhoneSubItem;
+import com.mj.newphoneapplication.items.PhoneSubItem;
 import com.mj.newphoneapplication.activities.PhoneDetailActivity;
 import com.mj.newphoneapplication.R;
 

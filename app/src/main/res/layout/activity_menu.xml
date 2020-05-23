@@ -48,7 +48,7 @@
     <fragment
         android:id="@+id/settings_fragment"
         android:layout_marginTop="?attr/actionBarSize"
-        android:name="com.mj.newphoneapplication.Fragments.SettingPreferenceFragment"
+        android:name="com.mj.newphoneapplication.fragments.SettingPreferenceFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Fragments;
+package com.mj.newphoneapplication.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -16,8 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.mj.newphoneapplication.Adapters.SubItemAdapter;
-import com.mj.newphoneapplication.Items.PhoneSubItem;
+import com.mj.newphoneapplication.adapters.SubItemAdapter;
+import com.mj.newphoneapplication.items.PhoneSubItem;
 import com.mj.newphoneapplication.activities.MainActivity;
 import com.mj.newphoneapplication.R;
 

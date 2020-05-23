@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.receivers;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -17,7 +17,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mj.newphoneapplication.items.DatabaseInfo;
 import com.mj.newphoneapplication.activities.MainActivity;
+import com.mj.newphoneapplication.services.CallService;
+import com.mj.newphoneapplication.services.RingingService;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -97,7 +100,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
                                                     if(document.getId().equals(number)){
                                                         incomingName = document.getData().get("이름").toString();
-                                                        MyService.setName(incomingName);
+                                                        RingingService.setName(incomingName);
                                                     }
                                                     DatabaseInfo databaseInfo = new DatabaseInfo();
                                                     databaseInfo.setNumber(document.getId());
@@ -109,7 +112,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
                                                 if(incomingName == null){
                                                     incomingName = "모르는 번호";
-                                                    MyService.setName(incomingName);
+                                                    RingingService.setName(incomingName);
                                                 }
 
 
@@ -127,7 +130,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
                     checked = 1;
                     if(Settings.canDrawOverlays(context)){
-                        Intent serviceIntent = new Intent(context, MyService.class);
+                        Intent serviceIntent = new Intent(context, RingingService.class);
                         serviceIntent.putExtra("incomingNumber",incomingNumber);
                         serviceIntent.putExtra("incomingName",incomingName);
                         context.startService(serviceIntent);
@@ -143,7 +146,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 checked = 0;
 
 
-                context.stopService(new Intent(context, MyService.class));
+                context.stopService(new Intent(context, RingingService.class));
                 if ((intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL))){
 
                 }

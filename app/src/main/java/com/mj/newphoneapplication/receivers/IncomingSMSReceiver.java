@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-import android.widget.Toast;
+
+import com.mj.newphoneapplication.services.SmsService;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +37,7 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                     ArrayList urls = pullLinks(smsBody);
 
                     if(Settings.canDrawOverlays(context)){
-                        Intent serviceIntent = new Intent(context, MyServiceSMS.class);
+                        Intent serviceIntent = new Intent(context, SmsService.class);
                         serviceIntent.putExtra("incomingSender",smsSender);
                         serviceIntent.putExtra("incomingBody",smsBody);
                         serviceIntent.putExtra("incomingUrls",urls);
@@ -60,7 +62,7 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
                     smsSender = messages[0].getOriginatingAddress();
 
                     if(Settings.canDrawOverlays(context)){
-                        Intent serviceIntent = new Intent(context, MyServiceSMS.class);
+                        Intent serviceIntent = new Intent(context, SmsService.class);
                         serviceIntent.putExtra("incomingNumber",smsSender);
                         serviceIntent.putExtra("incomingName",smsBody);
                         context.startService(serviceIntent);

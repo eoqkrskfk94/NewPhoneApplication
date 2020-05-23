@@ -36,17 +36,17 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
-import com.mj.newphoneapplication.Adapters.PageAdapter;
-import com.mj.newphoneapplication.ContactInfo;
-import com.mj.newphoneapplication.DatabaseInfo;
-import com.mj.newphoneapplication.Fragments.MessageFragment;
-import com.mj.newphoneapplication.Fragments.PhoneFragment;
-import com.mj.newphoneapplication.Fragments.SearchFragment;
-import com.mj.newphoneapplication.Items.MessageItem;
-import com.mj.newphoneapplication.Items.PhoneParentItem;
-import com.mj.newphoneapplication.Items.PhoneSubItem;
+import com.mj.newphoneapplication.adapters.PageAdapter;
+import com.mj.newphoneapplication.items.ContactInfo;
+import com.mj.newphoneapplication.items.DatabaseInfo;
+import com.mj.newphoneapplication.fragments.MessageFragment;
+import com.mj.newphoneapplication.fragments.PhoneFragment;
+import com.mj.newphoneapplication.fragments.SearchFragment;
+import com.mj.newphoneapplication.items.MessageItem;
+import com.mj.newphoneapplication.items.PhoneParentItem;
+import com.mj.newphoneapplication.items.PhoneSubItem;
 import com.mj.newphoneapplication.R;
-import com.mj.newphoneapplication.UrlInfo;
+import com.mj.newphoneapplication.items.UrlInfo;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,5 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.services;
+
 
 import android.app.Service;
 import android.content.Context;
@@ -7,7 +8,6 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,36 +22,47 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mj.newphoneapplication.items.DatabaseInfo;
+import com.mj.newphoneapplication.R;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 
-public class MyServiceSMS extends Service {
+public class RingingService extends Service {
 
     WindowManager wm;
     View mView;
-    String message;
-    String name;
-    ArrayList urls;
-    ArrayList<UrlInfo> databseUrls;
+    static String number = "";
+    static String name = "";
     private WindowManager.LayoutParams params;
-    private float START_Y;							//움직이기 위해 터치한 시작 점
-    private int PREV_Y;								//움직이기 이전에 뷰가 위치한 점
+    private float START_X, START_Y;							//움직이기 위해 터치한 시작 점
+    private int PREV_X, PREV_Y;								//움직이기 이전에 뷰가 위치한 점
     private int MAX_X = -1, MAX_Y = -1;
-
-
+    private static TextView nameView;
     @Override
-    public IBinder onBind(Intent intent) { return null; }
+    public IBinder onBind(Intent intent) {
+        return null; }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        number = (String) intent.getExtras().get("incomingNumber");
+        name = (String) intent.getExtras().get("incomingName");
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        Date now = new Date();
+        String sample = formatter.format(now);
+
+
+
+
         LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        name = (String) intent.getExtras().get("incomingSender");
-        message = (String) intent.getExtras().get("incomingBody");
-        urls = (ArrayList) intent.getExtras().get("incomingUrls");
+
+
 
 
         params = new WindowManager.LayoutParams(
@@ -68,17 +79,17 @@ public class MyServiceSMS extends Service {
 
 
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-        mView = inflate.inflate(R.layout.view_in_service_sms, null);
+        mView = inflate.inflate(R.layout.view_in_service, null);
         mView.setOnTouchListener(mViewTouchListener);
+        final TextView textView = (TextView) mView.findViewById(R.id.textView);
+        final TextView dateView = (TextView) mView.findViewById(R.id.dateView);
+        dateView.setText(formatter.format(now));
+        nameView = (TextView) mView.findViewById(R.id.nameView);
 
-        final TextView messageView = (TextView) mView.findViewById(R.id.MessageView);
-        final TextView nameView = (TextView) mView.findViewById(R.id.nameView);
-        final TextView urlView = (TextView) mView.findViewById(R.id.UrlView);
-        final TextView checkUrlView = (TextView) mView.findViewById(R.id.checkUrlView);
-        final String[] url = {""};
-        checkUrlView.setText("");
+        textView.setText(phone(number));
+        if(name != null) nameView.setText(name);
 
-        db.collection("banned_urls")
+        db.collection("entities")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -86,23 +97,24 @@ public class MyServiceSMS extends Service {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
-
-                                for (int i = 0; i < urls.size(); i++) {
-
-                                    if (urls.get(i).toString().contains(document.getId())){
-                                        checkUrlView.setText("In database");
-                                        url[0] += document.getId();
-                                        url[0] += " ";
-                                    }
+                                if(document.getId().equals(number)){
+                                    System.out.println("works");
+                                    name = document.getData().get("이름").toString();
+                                    nameView.setText(name);
+                                    break;
                                 }
 
-                                UrlInfo urlInfo = new UrlInfo();
-                                urlInfo.setUrl(document.getId());
-                                urlInfo.setName(document.getData().get("이름").toString());
-                                urlInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
+                                DatabaseInfo databaseInfo = new DatabaseInfo();
+                                databaseInfo.setNumber(document.getId());
+                                databaseInfo.setName(document.getData().get("이름").toString());
+                                databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
 
                             }
 
+                            if(name == null) {
+                                name = "모르는 번호";
+                                nameView.setText("모르는 번호");
+                            }
 
                         } else {
                             Log.w("Bad", "Error getting documents.", task.getException());
@@ -110,11 +122,10 @@ public class MyServiceSMS extends Service {
                     }
                 });
 
-        nameView.setText(name);
-        messageView.setText(message);
-        urlView.setText(url[0]);
-        final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
+
+
+        final ImageButton cancel = (ImageButton) mView.findViewById(R.id.cancelbtn);
 
         cancel.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -124,7 +135,6 @@ public class MyServiceSMS extends Service {
             }
         });
         wm.addView(mView, params);
-
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -162,7 +172,7 @@ public class MyServiceSMS extends Service {
                     //터치해서 이동한 만큼 이동 시킨다
                     params.y = PREV_Y + y;
 
-                    optimizePosition();        //뷰의 위치 최적화
+                    //optimizePosition();        //뷰의 위치 최적화
                     wm.updateViewLayout(mView, params);    //뷰 업데이트
                     break;
             }
@@ -192,6 +202,11 @@ public class MyServiceSMS extends Service {
         System.out.println(params.y);
     }
 
+    public static void setName(String name) {
+        nameView.setText(name);
+        RingingService.name = name;
+    }
+
     public static String phone(String src) {
         if (src == null) {
             return "";
@@ -206,5 +221,4 @@ public class MyServiceSMS extends Service {
 
 
 }
-
 

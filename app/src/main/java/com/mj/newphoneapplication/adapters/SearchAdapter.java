@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Adapters;
+package com.mj.newphoneapplication.adapters;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.mj.newphoneapplication.Items.SearchItem;
+import com.mj.newphoneapplication.items.SearchItem;
 import com.mj.newphoneapplication.R;
 import java.util.ArrayList;
 import androidx.annotation.NonNull;

@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Fragments;
+package com.mj.newphoneapplication.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

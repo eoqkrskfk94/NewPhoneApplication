@@ -1,8 +1,7 @@
-package com.mj.newphoneapplication.Fragments;
+package com.mj.newphoneapplication.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -28,9 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mj.newphoneapplication.Adapters.SearchAdapter;
-import com.mj.newphoneapplication.Adapters.SubItemAdapter;
-import com.mj.newphoneapplication.Items.SearchItem;
+import com.mj.newphoneapplication.adapters.SearchAdapter;
+import com.mj.newphoneapplication.items.SearchItem;
 import com.mj.newphoneapplication.R;
 
 import java.util.ArrayList;

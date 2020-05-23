@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication.Items;
+package com.mj.newphoneapplication.items;
 
 import java.util.ArrayList;
 

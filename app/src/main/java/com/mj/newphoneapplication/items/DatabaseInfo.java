@@ -1,9 +1,10 @@
-package com.mj.newphoneapplication.Items;
+package com.mj.newphoneapplication.items;
 
-public class SearchItem {
+public class DatabaseInfo {
 
     private String number;
     private String name;
+    private int spamCount;
 
     public String getNumber() {
         return number;
@@ -21,6 +22,13 @@ public class SearchItem {
         this.name = name;
     }
 
+    public int getSpamCount() {
+        return spamCount;
+    }
+
+    public void setSpamCount(int spamCount) {
+        this.spamCount = spamCount;
+    }
 
 
 }

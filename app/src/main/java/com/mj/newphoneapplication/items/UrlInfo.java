@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.items;
 
 public class UrlInfo {
 
