@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.mj.newphoneapplication.R;
 
 
 public class PhoneDetailActivity extends AppCompatActivity {

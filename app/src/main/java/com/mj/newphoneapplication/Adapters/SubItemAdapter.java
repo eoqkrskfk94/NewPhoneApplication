@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mj.newphoneapplication.Items.PhoneSubItem;
-import com.mj.newphoneapplication.PhoneDetailActivity;
+import com.mj.newphoneapplication.activities.PhoneDetailActivity;
 import com.mj.newphoneapplication.R;
 
 import java.util.ArrayList;

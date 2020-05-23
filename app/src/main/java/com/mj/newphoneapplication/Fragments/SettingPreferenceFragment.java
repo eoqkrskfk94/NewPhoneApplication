@@ -1,25 +1,16 @@
 package com.mj.newphoneapplication.Fragments;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
-import android.provider.Settings;
-import android.widget.Toast;
 
-import com.mj.newphoneapplication.MainActivity;
+import com.mj.newphoneapplication.activities.MainActivity;
 import com.mj.newphoneapplication.R;
 
 import javax.annotation.Nullable;
-
-import static android.content.Context.POWER_SERVICE;
 
 public class SettingPreferenceFragment extends PreferenceFragment {
 

@@ -9,14 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PhoneDetailActivity"></activity>
-        <activity android:name=".MenuActivity" />
+        <activity android:name=".activities.PhoneDetailActivity"></activity>
+        <activity android:name=".activities.MenuActivity" />
         <activity
-            android:name=".CallActivity"
+            android:name=".activities.CallActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".SubActivity" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity" />
+            android:name=".activities.MainActivity" />
 
         <receiver android:name=".IncomingCallReceiver">
             <intent-filter>

@@ -16,10 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.mj.newphoneapplication.Adapters.MessageAdapter;
-import com.mj.newphoneapplication.Adapters.SubItemAdapter;
 import com.mj.newphoneapplication.Items.MessageItem;
-import com.mj.newphoneapplication.Items.PhoneSubItem;
-import com.mj.newphoneapplication.MainActivity;
+import com.mj.newphoneapplication.activities.MainActivity;
 import com.mj.newphoneapplication.R;
 
 import java.util.ArrayList;

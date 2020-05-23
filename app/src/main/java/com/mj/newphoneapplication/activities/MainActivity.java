@@ -1,65 +1,52 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.provider.Telephony;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.mj.newphoneapplication.Adapters.PageAdapter;
+import com.mj.newphoneapplication.ContactInfo;
+import com.mj.newphoneapplication.DatabaseInfo;
 import com.mj.newphoneapplication.Fragments.MessageFragment;
 import com.mj.newphoneapplication.Fragments.PhoneFragment;
 import com.mj.newphoneapplication.Fragments.SearchFragment;
-import com.mj.newphoneapplication.Fragments.SettingPreferenceFragment;
 import com.mj.newphoneapplication.Items.MessageItem;
 import com.mj.newphoneapplication.Items.PhoneParentItem;
 import com.mj.newphoneapplication.Items.PhoneSubItem;
+import com.mj.newphoneapplication.R;
+import com.mj.newphoneapplication.UrlInfo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     long backKeyPressedTime;
     private Boolean battery;
     private Boolean overlay;
+
+
 
     SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy/MM/dd");
     SimpleDateFormat formatter3 = new SimpleDateFormat("HH:mm");

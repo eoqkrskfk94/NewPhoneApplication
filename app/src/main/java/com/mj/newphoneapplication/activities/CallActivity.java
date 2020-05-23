@@ -1,4 +1,4 @@
-package com.mj.newphoneapplication;
+package com.mj.newphoneapplication.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,9 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mj.newphoneapplication.DatabaseInfo;
+import com.mj.newphoneapplication.R;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
