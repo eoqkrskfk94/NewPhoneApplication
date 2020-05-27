@@ -58,15 +58,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<MessageItem> smsLog;
     private ArrayList<PhoneParentItem> parentCallLog;
     private ArrayList<UrlInfo> urlArray;
-    private int current_fragment;
-    private int next_fragment;
-    private Toolbar toolbar;
     long backKeyPressedTime;
     private Boolean battery;
     private Boolean overlay;
 
-
-
+    
     SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy/MM/dd");
     SimpleDateFormat formatter3 = new SimpleDateFormat("HH:mm");
     Date now = new Date();
@@ -104,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         TabItem messageLog = findViewById(R.id.messageLog);
         TabItem searchLog = findViewById(R.id.searchLog);
         ViewPager viewPager = findViewById(R.id.viewpager);
+        menuButton = findViewById(R.id.menuBtn);
 
-        int i;
         PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
         pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
         pageAdapter.AddFragment(new MessageFragment(),"메세지");
@@ -114,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
 
-        menuButton = findViewById(R.id.menuBtn);
+
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,67 +123,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //데이터베이스 번호 목록 불러오기
-
-//        if (datbaseArray == null) {
-//            datbaseArray = new ArrayList<DatabaseInfo>();
-//            db.collection("entities")
-//                    .get()
-//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                            if (task.isSuccessful()) {
-//                                for (QueryDocumentSnapshot document : task.getResult()) {
-//                                    DatabaseInfo databaseInfo = new DatabaseInfo();
-//                                    databaseInfo.setNumber(document.getId());
-//                                    databaseInfo.setName(document.getData().get("이름").toString());
-//                                    databaseInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-//                                    datbaseArray.add(databaseInfo);
-//
-//                                }
-//
-//
-//                            } else {
-//                                Log.w("Bad", "Error getting documents.", task.getException());
-//                            }
-//                        }
-//                    });
-//        }
-
-        //데이터베이스 url 목록 불러오기
-
-//        if (urlArray == null) {
-//            urlArray = new ArrayList<UrlInfo>();
-//            db.collection("banned_urls")
-//                    .get()
-//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                            if (task.isSuccessful()) {
-//                                for (QueryDocumentSnapshot document : task.getResult()) {
-//                                    UrlInfo urlInfo = new UrlInfo();
-//                                    urlInfo.setUrl(document.getId());
-//                                    urlInfo.setName(document.getData().get("이름").toString());
-//                                    urlInfo.setSpamCount(Integer.parseInt(document.getData().get("스팸신고 건수").toString()));
-//                                    urlArray.add(urlInfo);
-//
-//                                }
-//
-//
-//                            } else {
-//                                Log.w("Bad", "Error getting documents.", task.getException());
-//                            }
-//                        }
-//                    });
-//        }
-
-        //연락처 가져오기
-//        if (contactArray == null) {
-//            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-//                    == PackageManager.PERMISSION_GRANTED) {
-//                getContacts();
-//            }
-//        }
 
         //최근기록 가져오기
 
@@ -200,6 +135,19 @@ public class MainActivity extends AppCompatActivity {
         checkPermissionOverlay();
 
         //배터리 최적화 예외처리
+        checkPermissionBattery();
+
+
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
+            callLog = getCallDetails();
+
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
+            smsLog = getSMSDetails();
+
+
+    }
+
+    private void checkPermissionBattery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             Intent intent = new Intent();
@@ -212,15 +160,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
-
-
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
-            callLog = getCallDetails();
-
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
-            smsLog = getSMSDetails();
-
-
     }
 
     @Override
