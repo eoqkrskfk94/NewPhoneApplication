@@ -53,14 +53,17 @@ public class MainActivity extends AppCompatActivity {
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1;
     private static MainActivity ins;
     private ArrayList<ContactInfo> contactArray;
-    private ArrayList<DatabaseInfo> datbaseArray;
     private ArrayList<PhoneSubItem> callLog;
     private ArrayList<MessageItem> smsLog;
-    private ArrayList<PhoneParentItem> parentCallLog;
-    private ArrayList<UrlInfo> urlArray;
     long backKeyPressedTime;
     private Boolean battery;
     private Boolean overlay;
+
+    private TabLayout tabLayout;
+    private TabItem recentLog;
+    private TabItem messageLog;
+    private TabItem searchLog;
+    private ViewPager viewPager;
 
     
     SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy/MM/dd");
@@ -95,19 +98,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ins = this;
 
-        TabLayout tabLayout = findViewById(R.id.tablayout);
-        TabItem recentLog = findViewById(R.id.recentLog);
-        TabItem messageLog = findViewById(R.id.messageLog);
-        TabItem searchLog = findViewById(R.id.searchLog);
-        ViewPager viewPager = findViewById(R.id.viewpager);
-        menuButton = findViewById(R.id.menuBtn);
 
-        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
-        pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
-        pageAdapter.AddFragment(new MessageFragment(),"메세지");
-        //pageAdapter.AddFragment(new SearchFragment(),"검색");
-        viewPager.setAdapter(pageAdapter);
-        tabLayout.setupWithViewPager(viewPager);
+        findView();
+        pageAdapterCall();
+
 
 
 
@@ -123,10 +117,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-        //최근기록 가져오기
-
-
         //앱 권한 받기 기능
         //여러 앱 권한 받기 (문자, 폰상태, 전화기록, 문자기록)
         checkPermission();
@@ -137,14 +127,38 @@ public class MainActivity extends AppCompatActivity {
         //배터리 최적화 예외처리
         checkPermissionBattery();
 
+        retrieveCallLog();
+        retriveSmsLog();
 
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
-            callLog = getCallDetails();
+    }
 
+    private void findView() {
+        tabLayout = findViewById(R.id.tablayout);
+        recentLog = findViewById(R.id.recentLog);
+        messageLog = findViewById(R.id.messageLog);
+        searchLog = findViewById(R.id.searchLog);
+        viewPager = findViewById(R.id.viewpager);
+        menuButton = findViewById(R.id.menuBtn);
+    }
+
+    private void pageAdapterCall() {
+        PageAdapter pageAdapter = new PageAdapter(getSupportFragmentManager());
+        pageAdapter.AddFragment(new PhoneFragment(),"최근기록");
+        pageAdapter.AddFragment(new MessageFragment(),"메세지");
+        //pageAdapter.AddFragment(new SearchFragment(),"검색");
+        viewPager.setAdapter(pageAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+
+    private void retriveSmsLog() {
         if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED)
             smsLog = getSMSDetails();
+    }
 
-
+    private void retrieveCallLog() {
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED)
+            callLog = getCallDetails();
     }
 
     private void checkPermissionBattery() {
@@ -175,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //앱종료
     public void AppFinish() {
         finish();
         System.exit(0);
@@ -293,17 +306,6 @@ public class MainActivity extends AppCompatActivity {
         return contactArray;
     }
 
-    public ArrayList<DatabaseInfo> getDatbaseArray() {
-        return datbaseArray;
-    }
-
-    public ArrayList<PhoneParentItem> getParentCallLog() {
-        return parentCallLog;
-    }
-
-    public ArrayList<UrlInfo> getUrlArray() {
-        return urlArray;
-    }
 
     public ArrayList<PhoneSubItem> getCallLog() {
         return callLog;

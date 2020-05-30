@@ -38,22 +38,21 @@ public class CallActivity extends AppCompatActivity {
 
     private static CallActivity ins;
 
-    SharedPreferences prefs;
-
+    private SharedPreferences prefs;
+    private FirebaseFirestore db;
     private String incomingNumber;
     private String incomingName;
     static String contactName;
     private int unknownCall;
     static TimerTask tt;
     public int counter = 0;
-    TextView name;
+    private TextView name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+        db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
         incomingNumber = (String) intent.getExtras().get("incomingNumber");
@@ -65,9 +64,16 @@ public class CallActivity extends AppCompatActivity {
         final Timer timer = new Timer();
         timer.schedule(tt, 0, 1000);
 
-         name = (TextView) findViewById(R.id.nameView);
+        name = (TextView) findViewById(R.id.nameView);
+
+
 
         Boolean exist = contactExists(this, incomingNumber);
+        checkDatabase(exist);
+
+    }
+
+    private void checkDatabase(Boolean exist) {
         if (exist) {
             incomingName = contactName;
             name.setText(incomingName);
@@ -105,9 +111,6 @@ public class CallActivity extends AppCompatActivity {
                     });
         }
     }
-
-
-
 
     public static CallActivity getInstace() {
         return ins;

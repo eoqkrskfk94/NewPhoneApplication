@@ -1,7 +1,11 @@
 package com.mj.newphoneapplication.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -38,7 +42,7 @@ public class PhoneDetailActivity extends AppCompatActivity {
         nameView = findViewById(R.id.nameView);
         numberView = findViewById(R.id.numberView);
 
-        if(name == null) nameView.setText("등록되지 않은 번호");
+        if (name == null) nameView.setText("등록되지 않은 번호");
         else nameView.setText(name);
         numberView.setText(number);
 

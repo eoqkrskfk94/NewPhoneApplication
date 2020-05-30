@@ -11,7 +11,7 @@ import com.mj.newphoneapplication.R;
 
 public class MenuActivity extends AppCompatActivity {
 
-    ImageButton backBtn;
+    private ImageButton backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
