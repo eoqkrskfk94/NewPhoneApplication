@@ -123,7 +123,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                                     });
                         }
                         else{
-                            databaseArray = MainActivity.getInstace().getDatbaseArray();
+                            //databaseArray = MainActivity.getInstace().getDatbaseArray();
                         }
                         unknownCall = 1;
                     }

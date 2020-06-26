@@ -64,11 +64,9 @@ public class RingingService extends Service {
 
 
 
-
         params = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         |WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -77,9 +75,9 @@ public class RingingService extends Service {
                 PixelFormat.TRANSLUCENT);
 
 
-
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
         mView = inflate.inflate(R.layout.view_in_service, null);
+
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         final TextView dateView = (TextView) mView.findViewById(R.id.dateView);
