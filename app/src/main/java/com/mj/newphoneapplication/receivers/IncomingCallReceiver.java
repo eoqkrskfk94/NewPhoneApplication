@@ -18,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mj.newphoneapplication.items.DatabaseInfo;
-import com.mj.newphoneapplication.activities.MainActivity;
 import com.mj.newphoneapplication.services.CallService;
 import com.mj.newphoneapplication.services.RingingService;
 

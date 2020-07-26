@@ -6,7 +6,6 @@
     <PreferenceCategory android:title="앱 설정">
 
         <SwitchPreference
-
             android:defaultValue="true"
             android:key="vibration_alarm"
             android:title="진동 알림 기능"
@@ -28,7 +27,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="권한 설정"/>
+    <PreferenceCategory android:title="권한 설정">
 
     <Preference
         android:selectable="false"
@@ -43,6 +42,11 @@
         android:selectable="false"
         android:summary="ON"
         android:title="배터리 사용량 최적화 제외" />
+
+    </PreferenceCategory>
+
+
+
 
 
 

@@ -218,6 +218,7 @@ public class CallService extends Service {
         Boolean vibrate = prefs.getBoolean("vibration_alarm", true);
         Boolean voice = prefs.getBoolean("voice_alarm", false);
 
+
         int call_length[] = {0, 0, 0};
         if (level.equals("")) {
             //call_length[0] = 540;

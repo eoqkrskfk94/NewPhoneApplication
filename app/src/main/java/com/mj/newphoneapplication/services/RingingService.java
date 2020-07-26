@@ -78,6 +78,7 @@ public class RingingService extends Service {
         params.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
         mView = inflate.inflate(R.layout.view_in_service, null);
 
+
         mView.setOnTouchListener(mViewTouchListener);
         final TextView textView = (TextView) mView.findViewById(R.id.textView);
         final TextView dateView = (TextView) mView.findViewById(R.id.dateView);
