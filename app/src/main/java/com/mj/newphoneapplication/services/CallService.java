@@ -42,6 +42,7 @@ public class CallService extends Service {
 
     SharedPreferences prefs;
 
+
     static String number = "";
     static String name = "";
     static int unknownCall;
